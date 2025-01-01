@@ -3,9 +3,9 @@
  * 'Downloads' is a light weight category handling module for ImpressCMS
  *
  * File: /class/CategoryHandler.php
- * 
+ *
  * Classes responsible for managing Downloads category objects
- * 
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
@@ -22,11 +22,11 @@ defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 icms_loadLanguageFile('downloads', 'common');
 
 class DownloadsCategoryHandler extends icms_ipf_Handler {
-	
+
 	public $_moduleName;
-	
+
 	public $_uploadPath;
-	
+
 	public $identifierName;
 
 	public function __construct($db) {
@@ -56,7 +56,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		if ($category_pid !== FALSE)	$criteria->add(new icms_db_criteria_Item('category_pid', $category_pid));
 		return $criteria;
 	}
-	
+
 	public function getDownloadCategories($start = 0, $limit = 0, $category_publisher = FALSE, $category_id = FALSE,  $category_pid = FALSE, $order = 'weight', $sort = 'ASC', $approved= null, $active = null) {
 		$criteria = $this->getCategoryCriteria($start, $limit, $category_publisher, $category_id,  $category_pid, $order, $sort);
 		if($approved) $criteria->add(new icms_db_criteria_Item("category_approve", TRUE));
@@ -69,9 +69,9 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		}
 		return $ret;
 	}
-	
+
 	public function getCategoryListForPid($groups = array(), $perm = 'category_grpperm', $status = null,$approved = null, $category_id = null, $showNull = TRUE) {
-	
+
 		$criteria = new icms_db_criteria_Compo();
 		$this->setGrantedObjectsCriteria($criteria, "category_grpperm");
 		if (isset($status)) {
@@ -97,12 +97,12 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		}
 		return $ret;
 	}
-	
+
 	public function makeLink($category) {
 		$seo = str_replace(" ", "-", $category->getVar('short_url'));
 		return $seo;
 	}
-	
+
 	//set category online/offline
 	public function changeVisible($category_id) {
 		$visibility = '';
@@ -117,7 +117,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$this->insert($categoryObj, TRUE);
 		return $visibility;
 	}
-	
+
 	// show/hide category in Block
 	public function changeShow($category_id) {
 		$show = '';
@@ -132,7 +132,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$this->insert($categoryObj, TRUE);
 		return $show;
 	}
-	
+
 	// approve/deny categories created on userside
 	public function changeApprove($category_id) {
 		$approve = '';
@@ -147,19 +147,19 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$this->insert($categoryObj, TRUE);
 		return $approve;
 	}
-	
+
 	public function category_active_filter() {
 		return array(0 => 'Offline', 1 => 'Online');
 	}
-	
+
 	public function category_inblocks_filter() {
 		return array(0 => 'Hidden', 1 => 'Visible');
 	}
-	
+
 	public function category_approve_filter() {
 		return array(0 => 'Denied', 1 => 'Approved');
 	}
-	
+
 	static public function getImageList() {
 		$categoryimages = array();
 		$categoryimages = icms_core_Filesystem::getFileList(ICMS_ROOT_PATH . '/uploads/' . icms::$module -> getVar( 'dirname' ) . '/category/', '', array('gif', 'jpg', 'png'));
@@ -170,10 +170,10 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		}
 		return $ret;
 	}
-	
-	public function getCategoriesCount ($active = null, $approve = null, $groups, $perm = 'category_grpperm', $category_publisher = FALSE, $category_id = null, $category_pid = null) {
+
+	public function getCategoriesCount ( $groups, $perm = 'category_grpperm', $category_publisher = FALSE, $category_id = null, $category_pid = null,$active = null, $approve = null) {
 		$criteria = new icms_db_criteria_Compo();
-		
+
 		if (isset($active)) {
 			$criteria->add(new icms_db_criteria_Item('category_active', TRUE));
 		}
@@ -195,7 +195,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$module = icms::handler("icms_module")->getByDirname(basename(dirname(dirname(__FILE__))), TRUE);
 		return count(array_intersect_key($module->config['downloads_allowed_groups'], $user_groups)) > 0;
 	}
-	
+
 	// get breadcrumb
 	public function getBreadcrumbForPid($category_id, $userside=FALSE){
 		$ret = FALSE;
@@ -226,7 +226,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		}
 		return $ret;
 	}
-	
+
 	//update hit-counter
 	public function updateCounter($category_id) {
 		global $downloads_isAdmin;
@@ -254,7 +254,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$obj->setVar( 'category_published_date', (time() - 300) );
 		return TRUE;
 	}
-	
+
 	protected function afterSave(&$obj) {
 		if ($obj->updating_counter)
 		return TRUE;
@@ -269,7 +269,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		}
 		return TRUE;
 	}
-	
+
 	protected function afterDelete(& $obj) {
 		$notification_handler = icms::handler( 'icms_data_notification' );
 		$module_handler = icms::handler('icms_module');
@@ -280,7 +280,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		// delete global notifications
 		$notification_handler->unsubscribeByItem($module_id, $category, $category_id);
 		return TRUE;
-		
+		//todo reactivate the log functionality
 		$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
 		if (!is_object(icms::$user)) {
 			$log_uid = 0;
