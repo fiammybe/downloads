@@ -3,9 +3,9 @@
  * 'Downloads' is a light weight download handling module for ImpressCMS
  *
  * File: /icms_version.php
- * 
+ *
  * module informations
- * 
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@
 
 $modversion = array(
 					'name'						=> _MI_DOWNLOADS_NAME,
-					'version'					=> 1.0,
+					'version'					=> '1.1',
 					'description'				=> _MI_DOWNLOADS_DSC,
 					'author'					=> "QM-B &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>",
 					'credits'					=> "Thanks to Phoenyx for his great help while developing the module and McDonald for the nice layer for my Indeximage.",
@@ -41,27 +41,27 @@ $modversion = array(
 					'image'						=> "images/downloads_icon.png", /* for backward compatibility */
 
 					/**  Development information */
-					'status_version'			=> "1.1",
+					'status_version'			=> "1.1 RC",
 					'status'					=> "rc",
 					'date'						=> "Unreleased",
 					'author_word'				=> "",
 					'warning'					=> _CO_ICMS_WARNING_RC,
 
 					/** Contributors */
-					'developer_website_url' 	=> "http://code.google.com/p/amaryllis-modules/",
-					'developer_website_name' 	=> "Amaryllis Modules",
-					'developer_email' 			=> "qm-b@hotmail.de"
+					'developer_website_url' 	=> "https://github.com/ImpressModules/downloads",
+					'developer_website_name' 	=> "ImpressCMS",
+					'developer_email' 			=> "david.j@impresscms.org"
 				);
 
-$modversion['people']['developers'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
-$modversion['people']['testers'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
-$modversion['people']['testers'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
-$modversion['people']['other'][] = "Templates by: <a href='http://community.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
+$modversion['people']['developers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
+$modversion['people']['testers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
+$modversion['people']['testers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
+$modversion['people']['other'][] = "Templates by: <a href='https://www.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
 
-$modversion['people']['translators'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
-$modversion['people']['translators'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
-$modversion['people']['translators'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=1295' target='_blank'>Lotus</a>";
-$modversion['people']['translators'][] = "<a href='http://community.impresscms.org/userinfo.php?uid=97' target='_blank'>debianus</a>";
+$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
+$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
+$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1295' target='_blank'>Lotus</a>";
+$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=97' target='_blank'>debianus</a>";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// ADMINISTRATIVE INFORMATION ////////////////////////////////////////////
@@ -71,14 +71,14 @@ $modversion['hasMain'] 		= 1;
 $modversion['hasAdmin'] 	= 1;
 $modversion['adminindex']	= 'admin/index.php';
 $modversion['adminmenu'] 	= 'admin/menu.php';
-	
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// SUPPORT //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-$modversion['support_site_url'] = 'http://community.impresscms.org/modules/newbb/viewforum.php?forum=9';
+$modversion['support_site_url'] = 'https://www.impresscms.org/modules/newbb/viewforum.php?forum=9';
 $modversion['support_site_name']= 'ImpressCMS Community Forum';
 
 
