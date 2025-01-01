@@ -3,9 +3,9 @@
  * 'Downloads' is a light weight download handling module for ImpressCMS
  *
  * File: /class/Category.php
- * 
+ *
  * Class representing Download category objects
- * 
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
@@ -22,13 +22,13 @@ defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 class DownloadsCategory extends icms_ipf_seo_Object {
 
 	public $updating_counter = FALSE;
-	
+
 	public $categories = TRUE;
-	
+
 	public function __construct(&$handler) {
-		
+
 		icms_ipf_object::__construct($handler);
-		
+
 		$this->quickInitVar('category_id', XOBJ_DTYPE_INT, TRUE);
 		$this->quickInitVar('category_title', XOBJ_DTYPE_TXTBOX, TRUE);
 		$this->initCommonVar('short_url');
@@ -67,16 +67,16 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		$this->hideFieldFromForm(array('category_submitter', 'category_notification_sent', 'category_sub','counter', 'dohtml', 'dobr', 'doimage', 'dosmiley', 'docxode'));
 		// hide fields from single view
 		$this->hideFieldFromSingleView(array('category_notification_sent', 'weight', 'category_sub','counter', 'dohtml', 'dobr', 'doimage', 'dosmiley', 'docxode'));
-		
+
 		//make use of seo
 		$this->initiateSEO();
 	}
 
 	// get publisher as userlink
-	function getCategoryPublisher($link = FALSE) {		
+	function getCategoryPublisher($link = FALSE) {
 		return icms_member_user_Handler::getUserLink($this->getVar('category_publisher', 'e'));
 	}
-	
+
 	public function getCategoryPublishedDate() {
 		global $downloadsConfig;
 		$date = $this->getVar('category_published_date', 'e');
@@ -88,7 +88,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		$date = $this->getVar('category_updated_date', 'e');
 		return date($downloadsConfig['downloads_dateformat'], $date);
 	}
-	
+
 	public function getCategoryImageTag() {
 		$category_img = $image_tag = '';
 		$category_img = $this->getVar('category_img', 'e');
@@ -97,7 +97,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		}
 		return $image_tag;
 	}
-	
+
 	public function category_active() {
 		$active = $this->getVar('category_active', 'e');
 		if ($active == FALSE) {
@@ -108,7 +108,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 				<img src="' . DOWNLOADS_IMAGES_URL . 'visible.png" alt="Online" /></a>';
 		}
 	}
-	
+
 	public function category_inblocks() {
 		$active = $this->getVar('category_inblocks', 'e');
 		if ($active == FALSE) {
@@ -119,7 +119,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 				<img src="' . DOWNLOADS_IMAGES_URL . 'approved.png" alt="Visible" /></a>';
 		}
 	}
-	
+
 	public function category_approve() {
 		$active = $this->getVar('category_approve', 'e');
 		if ($active == FALSE) {
@@ -130,13 +130,13 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 				<img src="' . DOWNLOADS_IMAGES_URL . 'approved.png" alt="Approved" /></a>';
 		}
 	}
-	
+
 	public function getCategoryWeightControl() {
 		$control = new icms_form_elements_Text( '', 'weight[]', 5, 7,$this -> getVar( 'weight', 'e' ) );
 		$control->setExtra( 'style="text-align:center;"' );
 		return $control->render();
 	}
-	
+
 	function category_pid() {
 		static $category_pidArray;
 		if (!is_array($category_pidArray)) {
@@ -150,7 +150,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		}
 		return $ret;
 	}
-	
+
 	function submitAccessGranted() {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
@@ -165,7 +165,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		return FALSE;
 	}
 
-	function accessGranted() {
+	function accessGranted($perm_name) {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
 		$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));
@@ -185,29 +185,29 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		if ($downloads_isAdmin) return TRUE;
 		return $this->getVar('category_publisher', 'e') == icms::$user->getVar("uid");
 	}
-	
-	public function getViewItemLink() {
+
+	public function getViewItemLink($onlyUrl = FALSE, $linkTitle = FALSE, $linkTarget = FALSE) {
 		$ret = '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?op=view&amp;category_id=' . $this->getVar('category_id', 'e') . '" title="' . _CO_DOWNLOADS_VIEW . '"><img src="' . ICMS_IMAGES_SET_URL . '/actions/viewmag.png" /></a>';
 		return $ret;
 	}
-	
+
 	function getItemLink($onlyUrl = FALSE) {
 		$seo = $this->handler->makelink($this);
 		$url = DOWNLOADS_URL . 'index.php?category_id=' . $this -> getVar( 'category_id' ) . '&amp;cat=' . $seo;
 		if ($onlyUrl) return $url;
 		return '<a href="' . $url . '" title="' . $this -> getVar( 'category_title' ) . ' ">' . $this -> getVar( 'category_title' ) . '</a>';
 	}
-	
+
 	function getPreviewItemLink() {
 		$ret = '<a href="' . DOWNLOADS_URL . 'index.php?category_id=' . $this->getVar('category_id', 'e') . '" title="' . _CO_DOWNLOADS_PREVIEW . '" target="_blank">' . $this->getVar('category_title') . '</a>';
 		return $ret;
 	}
-	
+
 	public function getUserCanSubmitFile() {
 		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
-		
+
 	}
-	
+
 	public function userCanSubmit() {
 		$submit = $this->handler->userCanSubmit();
 		if($submit) {
@@ -217,7 +217,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		}
 		return $link;
 	}
-	
+
 	function toArray() {
 		$ret = parent::toArray();
 		$ret['id'] = $this->getVar("category_id", "e");
@@ -246,34 +246,24 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 			$tags ['CATEGORY_TITLE'] = $this->getVar('category_title');
 			$tags ['CATEGORY_URL'] = $this->getItemLink(FALSE);
 			switch ($case) {
-				case 'new_category':
+                case 'category_modified':
+                case 'category_submitted':
+                case 'new_category':
 					$category = 'global';
 					$cat_id = 0;
 					$recipient = array();
 					break;
-					
-				case 'category_modified':
-					$category = 'global';
-					$cat_id = 0;
-					$recipient = array();
-					break;
-					
-				case 'category_submitted':
-					$category = 'global';
-					$cat_id = 0;
-					$recipient = array();
-					break;
-					
-				case 'category_approved':
+
+                case 'category_approved':
 					$category = 'category';
 					$cat_id = $this->id();
 					$recipient = $this->getVar("category_publisher", "e");
 					break;
-				
+
 			}
 			icms::handler('icms_data_notification')->triggerEvent($category, $cat_id, $case, $tags, $recipient, $mid);
 		}
-		
+
 	}
 
 	function getReads() {
