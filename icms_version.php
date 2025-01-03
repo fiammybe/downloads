@@ -25,12 +25,12 @@
 
 $modversion = array(
 					'name'						=> _MI_DOWNLOADS_NAME,
-					'version'					=> '1.1',
+					'version'					=> '1.2',
 					'description'				=> _MI_DOWNLOADS_DSC,
-					'author'					=> "QM-B &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>",
-					'credits'					=> "Thanks to Phoenyx for his great help while developing the module and McDonald for the nice layer for my Indeximage.",
+					'author'					=> "fiammybe",
+					'credits'					=> "based upon the work by QM-B, MacDonald, Sato-san and other members of the community",
 					'help'						=> "admin/manual.php",
-					'license'					=> "GNU General Public License (GPL)",
+					'license'					=> "GNU General Public License v2 (GPLv2)",
 					'official'					=> 1,
 					'dirname'					=> basename( dirname( __FILE__ ) ),
 					'modname'					=> "downloads",
@@ -41,10 +41,10 @@ $modversion = array(
 					'image'						=> "images/downloads_icon.png", /* for backward compatibility */
 
 					/**  Development information */
-					'status_version'			=> "1.1 RC",
+					'status_version'			=> "1.2 RC",
 					'status'					=> "rc",
-					'date'						=> "Unreleased",
-					'author_word'				=> "",
+					'date'						=> "03 Jan 2025",
+					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2 and PHP 8.4",
 					'warning'					=> _CO_ICMS_WARNING_RC,
 
 					/** Contributors */
@@ -53,12 +53,10 @@ $modversion = array(
 					'developer_email' 			=> "david.j@impresscms.org"
 				);
 
-$modversion['people']['developers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
+$modversion['people']['developers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314'>fiammybe</a>";
 $modversion['people']['testers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
-$modversion['people']['testers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
-$modversion['people']['other'][] = "Templates by: <a href='https://www.impresscms.org/userinfo.php?uid=10' target='_blank'>Sato-San</a>";
 
-$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a> &nbsp;&nbsp;<span style='font-size: smaller;'>( qm-b [at] hotmail [dot] de )</span>";
+$modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314' target='_blank'>QM-B</a>";
 $modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
 $modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1295' target='_blank'>Lotus</a>";
 $modversion['people']['translators'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=97' target='_blank'>debianus</a>";
