@@ -165,7 +165,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		return FALSE;
 	}
 
-	function accessGranted($perm_name) {
+	function accessGranted($perm_name = null) {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
 		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__FILE__, 2)));
