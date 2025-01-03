@@ -3,9 +3,9 @@
  * "Downloads" is a light weight download handling module for ImpressCMS
  *
  * File: /class/Review.php
- * 
+ *
  * Class representing Download review objects
- * 
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@
 defined("ICMS_ROOT_PATH") or die("ICMS root path not defined");
 
 class DownloadsReview extends icms_ipf_Object {
-	
+
 	public function __construct(&$handler) {
 		parent::__construct($handler);
 
@@ -34,38 +34,36 @@ class DownloadsReview extends icms_ipf_Object {
 		$this->quickInitVar("review_ip", XOBJ_DTYPE_TXTBOX);
 		$this->quickInitVar("review_date",XOBJ_DTYPE_LTIME);
 		$this->initCommonVar('dohtml', FALSE, 1);
-		
+
 		$this->setControl("review_case", array("name" => "radio", "itemHandler" => "review", "method" => "getCase", "module" => "downloads"));
-		
+
 		$this->hideFieldFromForm(array("review_item_id", "review_uid", "review_ip", "review_date" ));
-		
+
 	}
 	/**
 	 * message output -> filter again
 	 */
 	public function getReviewMessage(){
-		
+
 		$message = icms_core_DataFilter::checkVar($this->getVar("review_message", "s"), "html", "output");
 		return $message;
 	}
 	/**
 	 * output of email should be qm-b at hotmail dot com, using no banned list
 	 */
-	
+
 	public function getReviewEmail(){
-		global $downloadsConfig;
 		$email = $this->getVar("review_email", "s");
 		return $email;
 	}
-	
+
 	public function getReviewPublishedDate() {
-		global $downloadsConfig;
 		$date = '';
 		$date = $this->getVar('review_date', 'e');
-		
-		return date($downloadsConfig['downloads_dateformat'], $date);
+
+		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
-	
+
 	public function getReviewAvatar() {
 		$review_uid = $this->getVar("review_uid", "e");
 		if((int)($review_uid > 0)) {
@@ -79,14 +77,14 @@ class DownloadsReview extends icms_ipf_Object {
 			return $avatar_image;
 		}
 	}
-	
+
 	public function getCase() {
 		$case = $this->getVar("review_case", "e");
 		switch ($case) {
 			case '1':
 				return _CO_DOWNLOADS_REVIEW_PRAISE;
 				break;
-			
+
 			case '2':
 				return _CO_DOWNLOADS_REVIEW_SUGGESTION;
 				break;
@@ -98,7 +96,7 @@ class DownloadsReview extends icms_ipf_Object {
 				break;
 		}
 	}
-	
+
 	public function getReviewItem() {
 		$item_id = $this->getVar("review_item_id", "e");
 		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
@@ -107,7 +105,7 @@ class DownloadsReview extends icms_ipf_Object {
 		$url = DOWNLOADS_URL . 'singledownload.php?download_id=' . $item_id;
 		return '<a href="' . $url . '" title="' . $filename . '">' . $filename . '</a>';
 	}
-	
+
 	function toArray() {
 		$ret = parent::toArray();
 		$ret['date'] = $this->getReviewPublishedDate();
@@ -118,5 +116,5 @@ class DownloadsReview extends icms_ipf_Object {
 		$ret['case'] = $this->getCase();
 		return $ret;
 	}
-	
+
 }

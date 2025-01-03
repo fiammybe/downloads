@@ -24,8 +24,10 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	public $updating_counter = FALSE;
 
 	public function __construct(&$handler) {
-		global $downloadsConfig;
+
 		icms_ipf_object::__construct($handler);
+
+
 
 		$this->quickInitVar('download_id', XOBJ_DTYPE_INT, TRUE);
 		$this->quickInitVar('download_title', XOBJ_DTYPE_TXTBOX, TRUE);
@@ -129,7 +131,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 		$this->hideFieldFromSingleView(array('download_has_mirror', 'download_version_link', 'download_status_set', 'download_comments','download_notification_sent','download_fb_like', 'download_fb_dislike','download_g_like', 'counter', 'dohtml', 'dobr', 'doimage', 'dosmiley', 'docxode'));
 
 		$albumModule = icms_getModuleInfo('album');
-		if ($downloadsConfig['use_album'] == 1 && icms_get_module_status("album")){
+		if (icms::$module->config['use_album'] == 1 && icms_get_module_status("album")){
 			$this->setControl('download_album', array('name' => 'select', 'itemHandler' => 'download', 'method' => 'getAlbumList', 'module' => 'downloads'));
 		} else {
 			$this->hideFieldFromForm('download_album');
@@ -137,7 +139,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 		}
 
 		$catalogueModule = icms_getModuleInfo('catalogue');
-		if ($downloadsConfig['use_catalogue'] == 1 && icms_get_module_status("catalogue")){
+		if (icms::$module->config['use_catalogue'] == 1 && icms_get_module_status("catalogue")){
 			$this->setControl('catalogue_item', array('name' => 'select', 'itemHandler' => 'download', 'method' => 'getCatalogueItems', 'module' => 'downloads'));
 		} else {
 			$this->hideFieldFromForm('catalogue_item');
@@ -145,14 +147,14 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 		}
 
 		$sprocketsModule = icms::handler('icms_module')->getByDirname("sprockets");
-		if($downloadsConfig['use_sprockets'] == 1 && icms_get_module_status("sprockets")) {
+		if(icms::$module->config['use_sprockets'] == 1 && icms_get_module_status("sprockets")) {
 			$this->setControl("download_tags", array("name" => "selectmulti", "itemHandler" => "download", "method" => "getDownloadTags", "module" => "downloads"));
 		} else {
 			$this->hideFieldFromForm("download_tags");
 			$this->hideFieldFromSingleView("download_tags");
 		}
 
-		if ($downloadsConfig['use_mirror'] == 0){
+		if (icms::$module->config['use_mirror'] == 0){
 			$this->hideFieldFromForm(array('download_mirror_approve','download_mirror_handling','download_mirror_url', 'download_mirror_title'));
 			$this->hideFieldFromSingleView(array('download_mirror_approve','download_mirror_handling','download_mirror_url', 'download_mirror_title'));
 		} else {
@@ -160,7 +162,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 			$this->setControl('download_mirror_approve', 'yesno');
 		}
 
-		if($downloadsConfig['need_version_control'] == 1) {
+		if(icms::$module->config['need_version_control'] == 1) {
 			$this->setControl('download_history', array('name' => 'textarea', 'form_editor' => 'htmlarea'));
 			$this->setControl('download_version_status',array('name' => 'select', 'itemHandler' => 'download', 'method' => 'getDownloadVersionStatus', 'module' => 'downloads'));
 		} else {
@@ -168,26 +170,26 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 			$this->hideFieldFromSingleView(array("download_history", "download_version", "download_version_status", "download_version_link"));
 		}
 
-		if($downloadsConfig['need_related_files'] == 1) {
+		if(icms::$module->config['need_related_files'] == 1) {
 			$this->setControl('download_related', array('name' => 'selectmulti', 'itemHandler' => 'download', 'method' => 'getRelated', 'module' => 'downloads'));
 		} else {
 			$this->hideFieldFromForm("download_related");
 			$this->hideFieldFromSingleView("download_related");
 		}
 
-		if($downloadsConfig['need_demo'] == 0) {
+		if(icms::$module->config['need_demo'] == 0) {
 			$this->hideFieldFromForm("download_demo");
 			$this->hideFieldFromSingleView("download_demo");
 		}
 
-		if($downloadsConfig['need_requirements'] == 1){
+		if(icms::$module->config['need_requirements'] == 1){
 			$this->setControl('download_requirements', 'textarea');
 		} else {
 			$this->hideFieldFromForm("download_requirements");
 			$this->hideFieldFromSingleView("download_requirements");
 		}
 
-		if($downloadsConfig['need_keyfeatures'] == 1){
+		if(icms::$module->config['need_keyfeatures'] == 1){
 			$this->setControl('download_keyfeatures', 'textarea');
 		} else {
 			$this->hideFieldFromForm("download_keyfeatures");
@@ -225,7 +227,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	}
 
 	public function getDownloadTags($itemlink = FALSE) {
-		global $downloadsConfig;
+
 		$tags = $this->getVar('download_tags', 's');
 		$sprocketsModule = icms_getModuleInfo("sprockets");
 		if(icms_get_module_status("sprockets") && $tags != "") {
@@ -328,16 +330,16 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	}
 
 	public function getDownloadPublishedDate() {
-		global $downloadsConfig;
+
 		$date = $this->getVar('download_published_date', 'e');
-		return date($downloadsConfig['downloads_dateformat'], $date);
+		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
 	public function getDownloadUpdatedDate() {
-		global $downloadsConfig;
+
 		$date = $this->getVar('download_updated_date', 'e');
 		if($date != 0) {
-			return date($downloadsConfig['downloads_dateformat'], $date);
+			return date(icms::$module->config['downloads_dateformat'], $date);
 		}
 	}
 
@@ -562,12 +564,12 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	}
 
 	public function getFileSize() {
-		global $downloadsConfig;
+
 		$myfile = $this->getDownloadTag(FALSE, TRUE);
 		if($myfile) {
 			$bytes = filesize($myfile);
-			$filesize = downloadsConvertFileSize($bytes, downloadsFileSizeType($downloadsConfig['display_file_size']), 2);
-			return $filesize . '&nbsp;' . downloadsFileSizeType($downloadsConfig['display_file_size']) ;
+			$filesize = downloadsConvertFileSize($bytes, downloadsFileSizeType(icms::$module->config['display_file_size']), 2);
+			return $filesize . '&nbsp;' . downloadsFileSizeType(icms::$module->config['display_file_size']) ;
 		}
 	}
 
@@ -607,14 +609,14 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	}
 
 	public function getMirrorLink() {
-		global $downloadsConfig;
+
 		$mirror = $this->getVar('download_mirror_url');
-		if ($downloadsConfig['use_mirror'] == 1 && !$mirror == "") {
+		if (icms::$module->config['use_mirror'] == 1 && !$mirror == "") {
 			$mirror_approve = $this->getVar('download_mirror_approve', 'e');
 			$mirror_url = 'download_mirror_url';
 			$linkObj = $this-> getUrlLinkObj($mirror_url);
 			$onlyurl = $linkObj->getVar("url", "e");
-			if($downloadsConfig['mirror_needs_approve'] == 1 ){
+			if(icms::$module->config['mirror_needs_approve'] == 1 ){
 				if ($mirror_approve == TRUE) {
 					return $onlyurl;
 				} else {
@@ -656,7 +658,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 	}
 
 	public function toArray() {
-		global $icmsConfig, $downloadsConfig;
+		global $icmsConfig;
 		$ret = parent::toArray();
 		$ret['id'] = $this->getVar('download_id');
 		$ret['title'] = $this->getVar('download_title');
@@ -677,7 +679,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 		$ret['screen_3'] = $this->getDownloadScreen3Tag();
 		$ret['screen_4'] = $this->getDownloadScreen4Tag();
 		$albumModule = icms_getModuleInfo('album');
-		if ($downloadsConfig['use_album'] == TRUE && $albumModule){
+		if (icms::$module->config['use_album'] == TRUE && $albumModule){
 			$ret['album_images'] = $this->getVar('download_album');
 		}
 

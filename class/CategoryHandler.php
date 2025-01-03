@@ -188,7 +188,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 	}
 
 	public function userCanSubmit() {
-		global $downloads_isAdmin, $downloadsConfig;
+		global $downloads_isAdmin;
 		if (!is_object(icms::$user)) return FALSE;
 		if ($downloads_isAdmin) return TRUE;
 		$user_groups = icms::$user->getGroups();

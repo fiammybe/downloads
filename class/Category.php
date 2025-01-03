@@ -78,15 +78,15 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 	}
 
 	public function getCategoryPublishedDate() {
-		global $downloadsConfig;
+
 		$date = $this->getVar('category_published_date', 'e');
-		return date($downloadsConfig['downloads_dateformat'], $date);
+		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
 	public function getCategoryUpdatedDate() {
-		global $downloadsConfig;
+
 		$date = $this->getVar('category_updated_date', 'e');
-		return date($downloadsConfig['downloads_dateformat'], $date);
+		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
 	public function getCategoryImageTag() {
@@ -168,7 +168,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 	function accessGranted($perm_name) {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
-		$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));
+		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__FILE__, 2)));
 		$viewperm = $gperm_handler->checkRight('category_grpperm', $this->getVar('category_id', 'e'), $groups, icms::$module->getVar("mid"));
 		if (is_object(icms::$user) && icms::$user->getVar("uid") == $this->getVar('category_publisher', 'e')) {
 			return TRUE;
@@ -232,7 +232,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		$ret['userCanEditAndDelete'] = $this->userCanEditAndDelete();
 		$ret['itemLink'] = $this->getItemLink(TRUE);
 		$ret['catlink'] = $this->getItemLink(FALSE);
-		$ret['accessgranted'] = $this->accessGranted();
+		$ret['accessgranted'] = $this->accessGranted('category_grpperm');
 		$ret['user_upload'] = $this->submitAccessGranted();
 		$ret['user_submit'] = $this->userCanSubmit();
 		return $ret;
