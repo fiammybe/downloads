@@ -53,7 +53,7 @@ function editcategory($categoryObj = 0, $clean_category_pid = 0) {
 		}
 		$categoryObj->hideFieldFromForm(array('category_pid', 'meta_description', 'meta_keywords', 'category_updated', 'category_publisher', 'category_submitter', 'category_approve', 'category_published_date', 'category_updated_date' ) );
 		$categoryObj->setVar('category_published_date', (time() - 100) );
-		if($downloadsConfig['category_needs_approve'] == 1) {
+		if(icms::$module->config['category_needs_approve'] == 1) {
 			$categoryObj->setVar('category_approve', FALSE );
 		} else {
 			$categoryObj->setVar('category_approve', TRUE );

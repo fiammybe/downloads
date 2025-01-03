@@ -53,10 +53,10 @@ $downloads_isAdmin = icms_userIsAdmin( DOWNLOADS_DIRNAME );
 
 $downloadsConfig = icms_getModuleConfig( DOWNLOADS_DIRNAME );
 
-/*if($downloadsConfig['use_sprockets'] == 1) {
+/*if(icms::$module->config['use_sprockets'] == 1) {
 	icms_loadLanguageFile('sprockets', 'common');
 }
-if($downloadsConfig['use_album'] == 1) {
+if(icms::$module->config['use_album'] == 1) {
 	icms_loadLanguageFile('album', 'common');
 }*/
 

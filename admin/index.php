@@ -48,7 +48,7 @@ $totalfiles = $downloads_download_handler->getCount();
 $totalcats = $downloads_category_handler->getCount();
 
 // check files to approve
-if ($downloadsConfig['downloads_needs_approve'] == 1) {
+if (icms::$module->config['downloads_needs_approve'] == 1) {
 	$criteria2 = '';
 	$criteria2 = new icms_db_criteria_Compo();
 	$criteria2 -> add(new icms_db_criteria_Item('download_approve', 0));
@@ -63,7 +63,7 @@ if ($downloadsConfig['downloads_needs_approve'] == 1) {
 
 
 //check categories to approve
-if ($downloadsConfig['category_needs_approve'] == 1) {
+if (icms::$module->config['category_needs_approve'] == 1) {
 	$criteria4 = '';
 	$criteria4 = new icms_db_criteria_Compo();
 	$criteria4 -> add(new icms_db_criteria_Item('category_approve', 0));

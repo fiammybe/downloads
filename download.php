@@ -53,12 +53,12 @@ function editdownload($downloadObj) {
 		}
 		$downloadObj->hideFieldFromForm(array('download_updated', 'download_broken','download_mirror_approve', 'meta_description', 'meta_keywords', 'download_updated', 'download_publisher', 'download_submitter', 'download_approve', 'download_published_date', 'download_updated_date' ) );
 		$downloadObj->setVar('download_published_date', (time() - 100) );
-		if($downloadsConfig['downloads_needs_approve'] == 1) {
+		if(icms::$module->config['downloads_needs_approve'] == 1) {
 			$downloadObj->setVar('download_approve', FALSE );
 		} else {
 			$downloadObj->setVar('download_approve', TRUE );
 		}
-		if($downloadsConfig['mirror_needs_approve'] == 1) {
+		if(icms::$module->config['mirror_needs_approve'] == 1) {
 			$downloadObj->setVar('download_mirror_approve', FALSE );
 		} else {
 			$downloadObj->setVar('download_mirror_approve', TRUE );

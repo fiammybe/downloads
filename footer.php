@@ -21,21 +21,21 @@ defined("ICMS_ROOT_PATH") or die("ICMS root path not defined");
 /**
  * check, if rss feeds are enabled. if so, display link
  */
-if($downloadsConfig['use_rss'] == 1) {
+if(icms::$module->config['use_rss'] == 1) {
 	$icmsTpl->assign("downloads_show_rss", TRUE);
 }
 /**
  * check, if breadcrumb should be displayed
  */
-if( $downloadsConfig['show_breadcrumbs'] == TRUE ) {
+if( icms::$module->config['show_breadcrumbs'] == TRUE ) {
 	$icmsTpl->assign('downloads_show_breadcrumb', TRUE);
 } else {
 	$icmsTpl->assign('downloads_show_breadcrumb', FALSE);
 }
-$icmsTpl->assign('thumbnail_width', $downloadsConfig['thumbnail_width']);
-$icmsTpl->assign('thumbnail_height', $downloadsConfig['thumbnail_height']);
-$icmsTpl->assign('file_thumbnail_width', $downloadsConfig['file_img_thumbnail_width']);
-$icmsTpl->assign('file_thumbnail_height', $downloadsConfig['file_img_thumbnail_height']);
+$icmsTpl->assign('thumbnail_width', icms::$module->config['thumbnail_width']);
+$icmsTpl->assign('thumbnail_height', icms::$module->config['thumbnail_height']);
+$icmsTpl->assign('file_thumbnail_width', icms::$module->config['file_img_thumbnail_width']);
+$icmsTpl->assign('file_thumbnail_height', icms::$module->config['file_img_thumbnail_height']);
 $icmsTpl->assign("downloads_adminpage", "<a href='" . ICMS_URL . "/modules/" . icms::$module->getVar("dirname") . "/admin/index.php'>" ._MD_DOWNLOADS_ADMIN_PAGE . "</a>");
 $icmsTpl->assign("downloads_is_admin", icms_userIsAdmin(DOWNLOADS_DIRNAME));
 $icmsTpl->assign('downloads_url', DOWNLOADS_URL);

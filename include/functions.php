@@ -21,13 +21,13 @@ defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
 //generates the Downloads admin menu in ACP
 function downloads_adminmenu( $currentoption = 0, $header = '', $menu = '', $extra = '', $scount = 5 ) {
-	icms::$module -> displayAdminMenu( $currentoption, icms::$module -> getVar( 'name' ) . ' | ' . $header );
+	icms::$module->displayAdminMenu( $currentoption, icms::$module -> getVar( 'name' ) . ' | ' . $header );
 	echo '<h3 style="color: #2F5376;">' . $header . '</h3>';
 }
 
 function downloads_display_new($time) {
 	global $downloadsConfig;
-	$new = ( time() - ( 86400 * (int)( $downloadsConfig['downloads_daysnew'] ) ) );
+	$new = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysnew'] ) ) );
 	if ( icms::$module->config['downloads_daysnew'] !== 0) {
 		if ( $new > $time ) {
 			$new = DOWNLOADS_IMAGES_URL . 'new.png';
@@ -43,7 +43,7 @@ function downloads_display_new($time) {
 
 function downloads_display_updated($time) {
 	global $downloadsConfig;
-	$updated = ( time() - ( 86400 * (int)( $downloadsConfig['downloads_daysupdated'] ) ) );
+	$updated = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysupdated'] ) ) );
 	if ( icms::$module->config['downloads_daysupdated'] !== 0) {
 		if ( $updated > $time ) {
 			$updated = DOWNLOADS_IMAGES_URL . 'updated.png';
@@ -59,7 +59,7 @@ function downloads_display_updated($time) {
 
 function downloads_display_popular($counter) {
 	global $downloadsConfig;
-	$popular = $downloadsConfig['downloads_popular'];
+	$popular = icms::$module->config['downloads_popular'];
 	if ( $popular !== 0) {
 		if ( $popular < $counter ) {
 			$popular = DOWNLOADS_IMAGES_URL . 'popular.png';
