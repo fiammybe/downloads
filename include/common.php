@@ -3,9 +3,9 @@
  * 'Downloads' is a light weight download handling module for ImpressCMS
  *
  * File: /include/common.php
- * 
+ *
  * File holding functions used by the module to hook with the comment system of ImpressCMS
- * 
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ icms_loadLanguageFile('downloads', 'common');
 
 include_once DOWNLOADS_ROOT_PATH . '/include/functions.php';
 
-$downloadsModule = icms_getModuleInfo( basename(dirname(dirname(__FILE__))) );
+$downloadsModule = icms_getModuleInfo( basename(dirname(__FILE__, 2)) );
 if (is_object($downloadsModule)) {
 	$downloads_moduleName = $downloadsModule->getVar('name');
 }
@@ -53,11 +53,11 @@ $downloads_isAdmin = icms_userIsAdmin( DOWNLOADS_DIRNAME );
 
 $downloadsConfig = icms_getModuleConfig( DOWNLOADS_DIRNAME );
 
-if($downloadsConfig['use_sprockets'] == 1) {
+/*if($downloadsConfig['use_sprockets'] == 1) {
 	icms_loadLanguageFile('sprockets', 'common');
 }
 if($downloadsConfig['use_album'] == 1) {
 	icms_loadLanguageFile('album', 'common');
-}
+}*/
 
 $icmsPersistableRegistry = icms_ipf_registry_Handler::getInstance();

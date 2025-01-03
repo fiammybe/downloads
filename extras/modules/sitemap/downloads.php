@@ -16,4 +16,3 @@ function b_sitemap_downloads() {
 	$block = sitemap_get_categoires_map( icms::$xoopsDB -> prefix( 'downloads_category' ), 'category_id', 'category_pid', 'category_title', 'index.php?category_id=', 'category_id');
 	return $block;
 }
-?>
