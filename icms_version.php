@@ -41,11 +41,11 @@ $modversion = array(
 					'image'						=> "images/downloads_icon.png", /* for backward compatibility */
 
 					/**  Development information */
-					'status_version'			=> "1.2 RC",
-					'status'					=> "rc",
-					'date'						=> "03 Jan 2025",
+					'status_version'			=> "1.2",
+					'status'					=> "final",
+					'date'						=> "12 Feb 2025",
 					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2",
-					'warning'					=> _CO_ICMS_WARNING_RC,
+					'warning'					=> _CO_ICMS_WARNING_FINAL,
 
 					/** Contributors */
 					'developer_website_url' 	=> "https://github.com/ImpressModules/downloads",
