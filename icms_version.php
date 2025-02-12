@@ -44,7 +44,7 @@ $modversion = array(
 					'status_version'			=> "1.2 RC",
 					'status'					=> "rc",
 					'date'						=> "03 Jan 2025",
-					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2 and PHP 8.4",
+					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2",
 					'warning'					=> _CO_ICMS_WARNING_RC,
 
 					/** Contributors */
