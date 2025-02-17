@@ -22,7 +22,7 @@ function editdownload($download_id = 0) {
 	
 	$downloadObj = $downloads_download_handler->get($download_id);
 	
-	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
+	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__DIR__)), "downloads");
 	if (!is_object(icms::$user)) {
 		$log_uid = 0;
 	} else {
@@ -72,7 +72,7 @@ function editdownload($download_id = 0) {
 
 include_once "admin_header.php";
 
-$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 $count = $downloads_category_handler -> getCount(FALSE, TRUE, FALSE);
 if( $count <= 0 ) {
 	redirect_header (DOWNLOADS_ADMIN_URL . 'category.php', 3, _AM_DOWNLOADS_NO_CAT_FOUND);
@@ -82,7 +82,7 @@ $valid_op = array ('mod', 'changedField', 'adddownload', 'del', 'view', 'visible
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
 if (isset($_POST['op'])) $clean_op = filter_input(INPUT_POST, 'op');
 
-$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
+$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 
 $clean_download_id = isset($_GET['download_id']) ? (int)$_GET['download_id'] : 0 ;
 

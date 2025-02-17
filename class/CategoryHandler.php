@@ -192,7 +192,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		if (!is_object(icms::$user)) return FALSE;
 		if ($downloads_isAdmin) return TRUE;
 		$user_groups = icms::$user->getGroups();
-		$module = icms::handler("icms_module")->getByDirname(basename(dirname(dirname(__FILE__))), TRUE);
+		$module = icms::handler("icms_module")->getByDirname(basename(dirname(__DIR__)), TRUE);
 		return count(array_intersect_key($module->config['downloads_allowed_groups'], $user_groups)) > 0;
 	}
 
@@ -281,7 +281,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$notification_handler->unsubscribeByItem($module_id, $category, $category_id);
 		return TRUE;
 		//todo reactivate the log functionality
-		$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
+		$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__DIR__)), "downloads");
 		if (!is_object(icms::$user)) {
 			$log_uid = 0;
 		} else {

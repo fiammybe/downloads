@@ -23,7 +23,7 @@ $valid_op = array ('view', '');
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
 
 $clean_log_id = isset($_GET['log_id']) ? filter_input(INPUT_GET, 'log_id', FILTER_SANITIZE_NUMBER_INT) : 0;
-$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
+$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__DIR__)), "downloads");
 
 if (in_array($clean_op, $valid_op, TRUE)){
 	switch ($clean_op) {

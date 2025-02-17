@@ -460,7 +460,7 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 		// delete global notifications
 		$notification_handler->unsubscribeByItem($module_id, $category, $download_id);
 
-		$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
+		$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__DIR__)), "downloads");
 		if (!is_object(icms::$user)) {
 			$log_uid = 0;
 		} else {

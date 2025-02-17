@@ -28,7 +28,7 @@ function b_downloads_category_menu_show($options) {
 	$uid = is_object(icms::$user) ? icms::$user->getVar('uid') : 0;
 	$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));
 	
-	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 
 	//$block['downloads_category'] = $downloads_category_handler->getCategoryListForMenu($options[0], $options[1], TRUE, TRUE, TRUE, $options[3], $options[2]);
 	$block['downloads_category'] = getDownloadCategories($options[1],$options[2],$options[3],$options[0]);
@@ -38,7 +38,7 @@ function b_downloads_category_menu_show($options) {
 function b_downloads_category_menu_edit($options) {
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
-	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 	
 	$sort = array('weight' => _CO_DOWNLOADS_CATEGORY_WEIGHT, 'category_title' => _CO_DOWNLOADS_CATEGORY_CATEGORY_TITLE);
 	$selsort = new icms_form_elements_Select('', 'options[2]', $options[2]);
@@ -78,7 +78,7 @@ function b_downloads_category_menu_edit($options) {
 
 function getDownloadCategories($showsubs = TRUE, $sort='weight', $order='ASC', $category_id = 0 ) {
 	global $downloads_category_handler;
-	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 	$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));
 	$criteria = new icms_db_criteria_Compo(new icms_db_criteria_Item('category_inblocks', 1));
 	

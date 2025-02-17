@@ -24,7 +24,7 @@ function b_downloads_spotlight_image_show($options) {
 	
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
-	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 	
 	$downloadsConfig = icms_getModuleConfig(basename(dirname(dirname(__FILE__))));
 	$downloads = $downloads_download_handler->getDownloadsForBlocks(0, $options[0], FALSE, FALSE, $options[5], $options[6], $options[1], TRUE);
@@ -42,7 +42,7 @@ function b_downloads_spotlight_image_show($options) {
 function b_downloads_spotlight_image_edit($options) {
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
-	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 	$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
 	$limit = new icms_form_elements_Text('', 'options[0]', 60, 255, $options[0]);
 	$selcats = new icms_form_elements_Select('', 'options[1]', $options[1]);

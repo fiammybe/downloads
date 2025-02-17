@@ -22,7 +22,7 @@ function editcategory($category_id = 0) {
 
 	$categoryObj = $downloads_category_handler->get($category_id);
 	
-	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(dirname(__FILE__))), "downloads");
+	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__DIR__)), "downloads");
 	if (!is_object(icms::$user)) {
 		$log_uid = 0;
 	} else {
@@ -75,7 +75,7 @@ $valid_op = array ('mod', 'changedField', 'addcategory', 'del', 'view', 'visible
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
 if (isset($_POST['op'])) $clean_op = filter_input(INPUT_POST, 'op');
 
-$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 
 $clean_category_id = isset($_GET['category_id']) ? filter_input(INPUT_GET, 'category_id', FILTER_SANITIZE_NUMBER_INT) : 0;
 $clean_category_id = ($clean_category_id == 0 && isset($_POST['category_id'])) ? filter_input(INPUT_POST, 'category_id', FILTER_SANITIZE_NUMBER_INT) : $clean_category_id;

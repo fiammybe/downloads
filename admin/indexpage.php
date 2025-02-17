@@ -33,7 +33,7 @@ include_once "admin_header.php";
 
 $clean_indexkey = $clean_op = $valid_op = '';
 
-$downloads_indexpage_handler = icms_getModuleHandler('indexpage', basename(dirname(dirname(__FILE__))), "downloads");
+$downloads_indexpage_handler = icms_getModuleHandler('indexpage', basename(dirname(__DIR__)), "downloads");
 
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
 if (isset($_POST['op'])) $clean_op = filter_input(INPUT_POST, 'op');

@@ -37,7 +37,7 @@ include_once "admin_header.php";
 
 $clean_review_id = isset($_GET['review_id']) ? (int)$_GET['review_id'] : 0 ;
 
-$downloads_review_handler = icms_getModuleHandler("review", basename(dirname(dirname(__FILE__))), "downloads");
+$downloads_review_handler = icms_getModuleHandler("review", basename(dirname(__DIR__)), "downloads");
 
 $valid_op = array ('mod', 'del', 'view','addreview', '');
 

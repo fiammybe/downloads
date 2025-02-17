@@ -26,8 +26,8 @@ $valid_op = array ('mod', 'changedField', 'adddownload', 'del', 'view', 'visible
 if (isset($_GET['op'])) $clean_op = htmlentities($_GET['op']);
 if (isset($_POST['op'])) $clean_op = htmlentities($_POST['op']);
 
-$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
-$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(dirname(__FILE__))), 'downloads');
+$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
+$downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
 
 $clean_download_id = isset($_GET['download_id']) ? (int)$_GET['download_id'] : 0 ;
 $clean_category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0 ;

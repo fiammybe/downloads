@@ -99,7 +99,7 @@ class DownloadsReview extends icms_ipf_Object {
 
 	public function getReviewItem() {
 		$item_id = $this->getVar("review_item_id", "e");
-		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
+		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
 		$file = $downloads_download_handler->get($item_id);
 		$filename = $file->getVar("download_title", "s");
 		$url = DOWNLOADS_URL . 'singledownload.php?download_id=' . $item_id;

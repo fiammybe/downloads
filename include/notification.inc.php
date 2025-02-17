@@ -37,14 +37,14 @@ function downloads_notify_iteminfo($category, $item_id) {
 			break;
 		
 		case 'category':
-			$downloads_category_handler = icms_getModuleHandler("category", basename(dirname(dirname(__FILE__))), "downloads");
+			$downloads_category_handler = icms_getModuleHandler("category", basename(dirname(__DIR__)), "downloads");
 			$category = $downloads_category_handler->get($item_id);
 			$item['name'] = $category->getVar('category_title');
 			$item['url'] = $category->getItemLink(TRUE);
 			break;
 			
 		case 'file':
-			$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
+			$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
 			$file = $downloads_download_handler->get($item_id);
 			$item['name'] = $file->getVar('download_title');
 			$item['url'] = $file->getItemLink(TRUE);

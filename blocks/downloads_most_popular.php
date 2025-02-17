@@ -24,7 +24,7 @@ function b_downloads_most_popular_show($options) {
 	
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
-	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 
 	$block['downloads_popular'] = $downloads_download_handler->getDownloadsForBlocks(0, $options[0], FALSE, TRUE, "download_published_date", "DESC");
 	
@@ -34,7 +34,7 @@ function b_downloads_most_popular_show($options) {
 function b_downloads_most_popular_edit($options) {
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
-	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 	$form = '<table><tr>';
 	$form .= '<tr><td>' . _MB_DOWNLOADS_DOWNLOAD_RECENT_LIMIT . '</td>';
 	$form .= '<td>' . '<input type="text" name="options[]" value="' . $options[0] . '"/></td>';

@@ -19,7 +19,7 @@
 
 
 function downloads_com_update($item_id, $total_num) {
-    $downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
+    $downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
     $downloads_download_handler->updateComments($item_id, $total_num);
 }
 

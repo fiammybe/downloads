@@ -204,7 +204,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 	}
 
 	public function getUserCanSubmitFile() {
-		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(dirname(__FILE__))), "downloads");
+		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
 
 	}
 

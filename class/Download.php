@@ -210,7 +210,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 
 	public function getDownloadCid($itemlink = FALSE) {
 		$cid = $this->getVar ( 'download_cid', 's' );
-		$downloads_category_handler = icms_getModuleHandler ( 'category',basename(dirname(dirname(__FILE__))), 'downloads' );
+		$downloads_category_handler = icms_getModuleHandler ( 'category',basename(dirname(__DIR__)), 'downloads' );
 		$ret = array();
 		if($itemlink == FALSE) {
 			foreach ($cid as $category) {

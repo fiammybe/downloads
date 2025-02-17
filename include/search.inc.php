@@ -23,7 +23,7 @@ defined("ICMS_ROOT_PATH") or die("ICMS root path not defined");
 include_once ICMS_ROOT_PATH . '/modules/' . basename(dirname(dirname(__FILE__))) . '/include/common.php';
 
 function downloads_search($queryarray, $andor, $limit, $offset, $userid) {
-	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(dirname(__FILE__))), 'downloads');
+	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 	$downloadsArray = $downloads_download_handler->getDownloadsForSearch($queryarray, $andor, $limit, $offset, $userid);
 
 	$ret = array();
