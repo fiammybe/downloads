@@ -1,57 +1,60 @@
 <?php
 /**
- * 'Downloads' is a light weight download handling module for ImpressCMS
+ * Downloads module for ImpressCMS
  *
  * File: /icms_version.php
  *
- * module informations
+ * Module version information and configuration
  *
- * @copyright	Copyright QM-B (Steffen Flohrer) 2011
- * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
- * ----------------------------------------------------------------------------------------------------------
- * 				Downloads
- * @since		1.00
- * @author		QM-B <qm-b@hotmail.de>
- * @version		$Id$
- * @package		downloads
- *
+ * @copyright  Copyright QM-B (Steffen Flohrer) 2011
+ * @copyright  The ImpressCMS Project
+ * @license    GPL 2.0
+ * @package    downloads
+ * @since      1.00
+ * @author     QM-B <qm-b@hotmail.de>
+ * @author     fiammybe
+ * @version    2.0.0
  */
 
+defined("ICMS_ROOT_PATH") or die("ImpressCMS root path not defined");
+
+// Load language file
+icms_loadLanguageFile('downloads', 'modinfo');
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////// GENERAL INFORMATION ////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+$modversion = [
+	// Basic Information
+	'name'          => _MI_DOWNLOADS_NAME,
+	'version'       => '2.0.0',
+	'description'   => _MI_DOWNLOADS_DSC,
+	'author'        => 'fiammybe',
+	'credits'       => 'Based upon the work by QM-B, MacDonald, Sato-san and other members of the community',
+	'help'          => 'admin/manual.php',
+	'license'       => 'GPL 2.0',
+	'official'      => 1,
+	'dirname'       => basename(__DIR__),
+	'modname'       => 'downloads',
 
-$modversion = array(
-					'name'						=> _MI_DOWNLOADS_NAME,
-					'version'					=> '1.2',
-					'description'				=> _MI_DOWNLOADS_DSC,
-					'author'					=> "fiammybe",
-					'credits'					=> "based upon the work by QM-B, MacDonald, Sato-san and other members of the community",
-					'help'						=> "admin/manual.php",
-					'license'					=> "GNU General Public License v2 (GPLv2)",
-					'official'					=> 1,
-					'dirname'					=> basename( dirname( __FILE__ ) ),
-					'modname'					=> "downloads",
+	// Images
+	'iconsmall'     => 'images/downloads_icon_small.png',
+	'iconbig'       => 'images/downloads_icon.png',
+	'image'         => 'images/downloads_icon.png',
 
-					/**  Images information  */
-					'iconsmall'					=> "images/downloads_icon_small.png",
-					'iconbig'					=> "images/downloads_icon.png",
-					'image'						=> "images/downloads_icon.png", /* for backward compatibility */
+	// Development information
+	'status_version' => '2.0.0',
+	'status'        => 'Beta',
+	'date'          => '14 Oct 2025',
+	'author_word'   => 'Refactored to modern ImpressCMS 2.0+ standards with PHP 8.2+ features and controller-based architecture',
+	'warning'       => _CO_ICMS_WARNING_BETA,
 
-					/**  Development information */
-					'status_version'			=> "1.2",
-					'status'					=> "final",
-					'date'						=> "12 Feb 2025",
-					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2",
-					'warning'					=> _CO_ICMS_WARNING_FINAL,
-
-					/** Contributors */
-					'developer_website_url' 	=> "https://github.com/ImpressModules/downloads",
-					'developer_website_name' 	=> "ImpressCMS",
-					'developer_email' 			=> "david.j@impresscms.org"
-				);
+	// Contributors
+	'developer_website_url'  => 'https://github.com/ImpressModules/downloads',
+	'developer_website_name' => 'ImpressCMS',
+	'developer_email'        => 'david.j@impresscms.org',
+];
 
 $modversion['people']['developers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=1314'>fiammybe</a>";
 $modversion['people']['testers'][] = "<a href='https://www.impresscms.org/userinfo.php?uid=462' target='_blank'>David</a>";
@@ -65,19 +68,20 @@ $modversion['people']['translators'][] = "<a href='https://www.impresscms.org/us
 ////////////////////////////////////// ADMINISTRATIVE INFORMATION ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-$modversion['hasMain'] 		= 1;
-$modversion['hasAdmin'] 	= 1;
-$modversion['adminindex']	= 'admin/index.php';
-$modversion['adminmenu'] 	= 'admin/menu.php';
+// Main Menu
+$modversion['hasMain'] = 1;
 
+// Admin Interface
+$modversion['hasAdmin']   = 1;
+$modversion['adminindex'] = 'admin/index.php';
+$modversion['adminmenu']  = 'admin/menu.php';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////// SUPPORT //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-$modversion['support_site_url'] = 'https://www.impresscms.org/modules/newbb/viewforum.php?forum=9';
-$modversion['support_site_name']= 'ImpressCMS Community Forum';
+$modversion['support_site_url']  = 'https://www.impresscms.org/modules/newbb/viewforum.php?forum=9';
+$modversion['support_site_name'] = 'ImpressCMS Community Forum';
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
