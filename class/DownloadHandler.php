@@ -1,44 +1,51 @@
 <?php
 /**
- * 'Downloads' is a light weight download handling module for ImpressCMS
+ * Downloads module for ImpressCMS
  *
  * File: /class/DownloadHandler.php
  *
- * Classes responsible for managing Downloads download objects
+ * Handler class for managing download objects with fluent interface
  *
- * @copyright	Copyright QM-B (Steffen Flohrer) 2011
- * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
- * ----------------------------------------------------------------------------------------------------------
- * 				Downloads
- * @since		1.00
- * @author		QM-B <qm-b@hotmail.de>
- * @version		$Id$
- * @package		downloads
- *
+ * @copyright  Copyright QM-B (Steffen Flohrer) 2011
+ * @copyright  The ImpressCMS Project
+ * @license    GPL 2.0
+ * @package    downloads
+ * @since      1.00
+ * @author     QM-B <qm-b@hotmail.de>
+ * @author     fiammybe
+ * @version    2.0.0
  */
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsDownloadHandler extends icms_ipf_Handler {
+/**
+ * Download Handler with Fluent Interface
+ *
+ * Manages CRUD operations for download objects with modern fluent query builder
+ *
+ * @package Downloads
+ */
+class DownloadsDownloadHandler extends icms_ipf_Handler
+{
+	private array $_download_limitations = [];
+	private array $_download_related = [];
+	private array $_download_platform = [];
+	private array $_download_version_status = [];
+	private array $_download_license = [];
+	private array $_download_cid = [];
 
-	private $_download_limitations = array();
+	public string $_moduleName;
 
-	private $_download_related = array();
-
-	private $_download_platform = array();
-
-	private $_download_version_status = array();
-
-	private $_download_license = array();
-
-	private $_download_cid = array();
-
-	public $_moduleName;
-
-	public function __construct(&$db) {
+	/**
+	 * Constructor
+	 *
+	 * @param icms_db_legacy_Database $db Database connection
+	 */
+	public function __construct(icms_db_legacy_Database &$db)
+	{
 		parent::__construct($db, "download", "download_id", "download_title", "download_description", "downloads");
 		$this->addPermission('download_grpperm', _CO_DOWNLOADS_DOWNLOAD_DOWNLOAD_GRPPERM, _CO_DOWNLOADS_DOWNLOAD_DOWNLOAD_GRPPERM_DSC);
-		$mimetypes = array('image/jpeg', 'image/png', 'image/gif');
+		$mimetypes = ['image/jpeg', 'image/png', 'image/gif'];
 		$this->enableUpload($allowedMimeTypes = TRUE, icms::$module->config['image_file_size'], icms::$module->config['image_upload_width'], icms::$module->config['image_upload_height']);
 
 		$mimetypes = $this->checkMimeType();
@@ -321,7 +328,7 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	public function getRelated() {
 		if (!$this->_download_related) {
-			$this->_download_related = $this->getList(TRUE);
+			$this->_download_related = $this->getList();
 		}
 		return $this->_download_related;
 	}
@@ -475,6 +482,171 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 		$logObj->setVar('log_ip', xoops_getenv('REMOTE_ADDR') );
 		$logObj->store(TRUE);
 		return TRUE;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////// FLUENT INTERFACE ////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Fluent query builder state
+	 */
+	private array $whereClauses = [];
+	private ?string $orderByField = null;
+	private string $orderDirection = 'ASC';
+	private int $limitValue = 0;
+	private int $offsetValue = 0;
+
+	/**
+	 * Add WHERE clause (fluent)
+	 *
+	 * @param string $field Field name
+	 * @param mixed $value Value to compare
+	 * @param string $operator Comparison operator (=, !=, >, <, >=, <=, LIKE)
+	 * @return self
+	 */
+	public function where(string $field, mixed $value, string $operator = '='): self
+	{
+		$this->whereClauses[] = compact('field', 'value', 'operator');
+		return $this;
+	}
+
+	/**
+	 * Conditional WHERE clause (fluent)
+	 *
+	 * @param mixed $condition Condition to evaluate
+	 * @param callable $callback Callback to execute if condition is true
+	 * @return self
+	 */
+	public function when(mixed $condition, callable $callback): self
+	{
+		if ($condition) {
+			$callback($this);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set ORDER BY (fluent)
+	 *
+	 * @param string $field Field to order by
+	 * @param string $direction Sort direction (ASC or DESC)
+	 * @return self
+	 */
+	public function orderBy(string $field, string $direction = 'ASC'): self
+	{
+		$this->orderByField = $field;
+		$this->orderDirection = strtoupper($direction);
+		return $this;
+	}
+
+	/**
+	 * Set LIMIT (fluent)
+	 *
+	 * @param int $limit Maximum number of results
+	 * @return self
+	 */
+	public function limit(int $limit): self
+	{
+		$this->limitValue = $limit;
+		return $this;
+	}
+
+	/**
+	 * Set OFFSET (fluent)
+	 *
+	 * @param int $offset Number of results to skip
+	 * @return self
+	 */
+	public function offset(int $offset): self
+	{
+		$this->offsetValue = $offset;
+		return $this;
+	}
+
+	/**
+	 * Execute query and get results
+	 *
+	 * @return array Array of download objects
+	 */
+	public function get(): array
+	{
+		$criteria = $this->buildCriteria();
+		$results = $this->getObjects($criteria);
+		$this->reset();
+		return $results;
+	}
+
+	/**
+	 * Get first result
+	 *
+	 * @return DownloadsDownload|null First download object or null
+	 */
+	public function first(): ?DownloadsDownload
+	{
+		$this->limit(1);
+		$results = $this->get();
+		return $results[0] ?? null;
+	}
+
+	/**
+	 * Count results
+	 *
+	 * @return int Number of matching results
+	 */
+	public function count(): int
+	{
+		$criteria = $this->buildCriteria();
+		$count = $this->getCount($criteria);
+		$this->reset();
+		return $count;
+	}
+
+	/**
+	 * Build criteria from fluent calls
+	 *
+	 * @return icms_db_criteria_Compo Criteria object
+	 */
+	private function buildCriteria(): icms_db_criteria_Compo
+	{
+		$criteria = new icms_db_criteria_Compo();
+
+		foreach ($this->whereClauses as $clause) {
+			$criteria->add(new icms_db_criteria_Item(
+				$clause['field'],
+				$clause['value'],
+				$clause['operator']
+			));
+		}
+
+		if ($this->orderByField) {
+			$criteria->setSort($this->orderByField);
+			$criteria->setOrder($this->orderDirection);
+		}
+
+		if ($this->limitValue > 0) {
+			$criteria->setLimit($this->limitValue);
+		}
+
+		if ($this->offsetValue > 0) {
+			$criteria->setStart($this->offsetValue);
+		}
+
+		return $criteria;
+	}
+
+	/**
+	 * Reset query builder state
+	 *
+	 * @return void
+	 */
+	private function reset(): void
+	{
+		$this->whereClauses = [];
+		$this->orderByField = null;
+		$this->orderDirection = 'ASC';
+		$this->limitValue = 0;
+		$this->offsetValue = 0;
 	}
 
 }

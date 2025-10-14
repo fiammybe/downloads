@@ -1,39 +1,49 @@
 <?php
 /**
- * 'Downloads' is a light weight category handling module for ImpressCMS
+ * Downloads module for ImpressCMS
  *
  * File: /class/CategoryHandler.php
  *
- * Classes responsible for managing Downloads category objects
+ * Handler class for managing category objects with fluent interface
  *
- * @copyright	Copyright QM-B (Steffen Flohrer) 2011
- * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
- * ----------------------------------------------------------------------------------------------------------
- * 				Downloads
- * @since		1.00
- * @author		QM-B <qm-b@hotmail.de>
- * @version		$Id$
- * @package		downloads
- *
+ * @copyright  Copyright QM-B (Steffen Flohrer) 2011
+ * @copyright  The ImpressCMS Project
+ * @license    GPL 2.0
+ * @package    downloads
+ * @since      1.00
+ * @author     QM-B <qm-b@hotmail.de>
+ * @author     fiammybe
+ * @version    2.0.0
  */
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
 icms_loadLanguageFile('downloads', 'common');
 
-class DownloadsCategoryHandler extends icms_ipf_Handler {
+/**
+ * Category Handler with Fluent Interface
+ *
+ * Manages CRUD operations for category objects with modern fluent query builder
+ *
+ * @package Downloads
+ */
+class DownloadsCategoryHandler extends icms_ipf_Handler
+{
+	public string $_moduleName;
+	public string $_uploadPath;
+	public string $identifierName;
 
-	public $_moduleName;
-
-	public $_uploadPath;
-
-	public $identifierName;
-
-	public function __construct($db) {
+	/**
+	 * Constructor
+	 *
+	 * @param icms_db_legacy_Database $db Database connection
+	 */
+	public function __construct(icms_db_legacy_Database $db)
+	{
 		parent::__construct($db, 'category', 'category_id', 'category_title', 'category_description', 'downloads');
 		$this->addPermission('category_grpperm', _CO_DOWNLOADS_CATEGORY_CATEGORY_GRPPERM, _CO_DOWNLOADS_CATEGORY_CATEGORY_GRPPERM_DSC);
 		$this->addPermission('category_uplperm', _CO_DOWNLOADS_CATEGORY_CATEGORY_UPLPERM, _CO_DOWNLOADS_CATEGORY_CATEGORY_UPLPERM_DSC);
-		$mimetypes = array('image/jpeg', 'image/png', 'image/gif');
+		$mimetypes = ['image/jpeg', 'image/png', 'image/gif'];
 		$this->enableUpload($mimetypes, 2000000, 500, 500);
 	}
 
@@ -295,6 +305,171 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$logObj->setVar('log_case', 2 );
 		$logObj->setVar('log_ip', xoops_getenv('REMOTE_ADDR') );
 		$logObj->store(TRUE);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////// FLUENT INTERFACE ////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Fluent query builder state
+	 */
+	private array $whereClauses = [];
+	private ?string $orderByField = null;
+	private string $orderDirection = 'ASC';
+	private int $limitValue = 0;
+	private int $offsetValue = 0;
+
+	/**
+	 * Add WHERE clause (fluent)
+	 *
+	 * @param string $field Field name
+	 * @param mixed $value Value to compare
+	 * @param string $operator Comparison operator
+	 * @return self
+	 */
+	public function where(string $field, mixed $value, string $operator = '='): self
+	{
+		$this->whereClauses[] = compact('field', 'value', 'operator');
+		return $this;
+	}
+
+	/**
+	 * Conditional WHERE clause (fluent)
+	 *
+	 * @param mixed $condition Condition to evaluate
+	 * @param callable $callback Callback to execute if condition is true
+	 * @return self
+	 */
+	public function when(mixed $condition, callable $callback): self
+	{
+		if ($condition) {
+			$callback($this);
+		}
+		return $this;
+	}
+
+	/**
+	 * Set ORDER BY (fluent)
+	 *
+	 * @param string $field Field to order by
+	 * @param string $direction Sort direction
+	 * @return self
+	 */
+	public function orderBy(string $field, string $direction = 'ASC'): self
+	{
+		$this->orderByField = $field;
+		$this->orderDirection = strtoupper($direction);
+		return $this;
+	}
+
+	/**
+	 * Set LIMIT (fluent)
+	 *
+	 * @param int $limit Maximum number of results
+	 * @return self
+	 */
+	public function limit(int $limit): self
+	{
+		$this->limitValue = $limit;
+		return $this;
+	}
+
+	/**
+	 * Set OFFSET (fluent)
+	 *
+	 * @param int $offset Number of results to skip
+	 * @return self
+	 */
+	public function offset(int $offset): self
+	{
+		$this->offsetValue = $offset;
+		return $this;
+	}
+
+	/**
+	 * Execute query and get results
+	 *
+	 * @return array Array of category objects
+	 */
+	public function get(): array
+	{
+		$criteria = $this->buildCriteria();
+		$results = $this->getObjects($criteria);
+		$this->reset();
+		return $results;
+	}
+
+	/**
+	 * Get first result
+	 *
+	 * @return DownloadsCategory|null First category object or null
+	 */
+	public function first(): ?DownloadsCategory
+	{
+		$this->limit(1);
+		$results = $this->get();
+		return $results[0] ?? null;
+	}
+
+	/**
+	 * Count results
+	 *
+	 * @return int Number of matching results
+	 */
+	public function count(): int
+	{
+		$criteria = $this->buildCriteria();
+		$count = $this->getCount($criteria);
+		$this->reset();
+		return $count;
+	}
+
+	/**
+	 * Build criteria from fluent calls
+	 *
+	 * @return icms_db_criteria_Compo Criteria object
+	 */
+	private function buildCriteria(): icms_db_criteria_Compo
+	{
+		$criteria = new icms_db_criteria_Compo();
+
+		foreach ($this->whereClauses as $clause) {
+			$criteria->add(new icms_db_criteria_Item(
+				$clause['field'],
+				$clause['value'],
+				$clause['operator']
+			));
+		}
+
+		if ($this->orderByField) {
+			$criteria->setSort($this->orderByField);
+			$criteria->setOrder($this->orderDirection);
+		}
+
+		if ($this->limitValue > 0) {
+			$criteria->setLimit($this->limitValue);
+		}
+
+		if ($this->offsetValue > 0) {
+			$criteria->setStart($this->offsetValue);
+		}
+
+		return $criteria;
+	}
+
+	/**
+	 * Reset query builder state
+	 *
+	 * @return void
+	 */
+	private function reset(): void
+	{
+		$this->whereClauses = [];
+		$this->orderByField = null;
+		$this->orderDirection = 'ASC';
+		$this->limitValue = 0;
+		$this->offsetValue = 0;
 	}
 
 }
