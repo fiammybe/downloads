@@ -19,9 +19,22 @@
 
 defined("ICMS_ROOT_PATH") or die("ICMS root path not defined");
 
-class DownloadsReview extends icms_ipf_Object {
-
-	public function __construct(&$handler) {
+/**
+ * Review entity class
+ *
+ * Represents a download review with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsReview extends icms_ipf_Object
+{
+	/**
+	 * Constructor
+	 *
+	 * @param icms_ipf_Handler $handler Handler instance
+	 */
+	public function __construct(icms_ipf_Handler &$handler)
+	{
 		parent::__construct($handler);
 
 		$this->quickInitVar("review_id", XOBJ_DTYPE_INT, TRUE);
@@ -41,60 +54,69 @@ class DownloadsReview extends icms_ipf_Object {
 
 	}
 	/**
-	 * message output -> filter again
+	 * Get review message with HTML filtering
+	 *
+	 * @return string Filtered message
 	 */
-	public function getReviewMessage(){
-
-		$message = icms_core_DataFilter::checkVar($this->getVar("review_message", "s"), "html", "output");
-		return $message;
+	public function getReviewMessage(): string
+	{
+		return icms_core_DataFilter::checkVar($this->getVar("review_message", "s"), "html", "output");
 	}
+
 	/**
-	 * output of email should be qm-b at hotmail dot com, using no banned list
+	 * Get review email
+	 *
+	 * @return string Email address
 	 */
-
-	public function getReviewEmail(){
-		$email = $this->getVar("review_email", "s");
-		return $email;
+	public function getReviewEmail(): string
+	{
+		return $this->getVar("review_email", "s");
 	}
 
-	public function getReviewPublishedDate() {
-		$date = '';
+	/**
+	 * Get formatted review published date
+	 *
+	 * @return string Formatted date
+	 */
+	public function getReviewPublishedDate(): string
+	{
 		$date = $this->getVar('review_date', 'e');
-
 		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
-	public function getReviewAvatar() {
+	/**
+	 * Get review avatar image
+	 *
+	 * @return string Avatar HTML image tag
+	 */
+	public function getReviewAvatar(): string
+	{
 		$review_uid = $this->getVar("review_uid", "e");
-		if((int)($review_uid > 0)) {
+		if ((int)$review_uid > 0) {
 			$review_user = icms::handler("icms_member")->getUser($review_uid);
 			$review_avatar = $review_user->gravatar();
-			$avatar_image = "<img src='" . $review_avatar . "' alt='avatar' />";
-			return $avatar_image;
-		} else {
-			$review_avatar = "blank.gif";
-			$avatar_image = "<img src='" . ICMS_UPLOAD_URL . "/" . $review_avatar . "' alt='avatar' />";
-			return $avatar_image;
+			return sprintf('<img src="%s" alt="avatar" />', $review_avatar);
 		}
+
+		$review_avatar = "blank.gif";
+		return sprintf('<img src="%s/%s" alt="avatar" />', ICMS_UPLOAD_URL, $review_avatar);
 	}
 
-	public function getCase() {
+	/**
+	 * Get review case label
+	 *
+	 * @return string Case label
+	 */
+	public function getCase(): string
+	{
 		$case = $this->getVar("review_case", "e");
-		switch ($case) {
-			case '1':
-				return _CO_DOWNLOADS_REVIEW_PRAISE;
-				break;
-
-			case '2':
-				return _CO_DOWNLOADS_REVIEW_SUGGESTION;
-				break;
-			case '3':
-				return _CO_DOWNLOADS_REVIEW_PROBLEM;
-				break;
-			case '4':
-				return _CO_DOWNLOADS_REVIEW_QUESTION;
-				break;
-		}
+		return match ($case) {
+			'1' => _CO_DOWNLOADS_REVIEW_PRAISE,
+			'2' => _CO_DOWNLOADS_REVIEW_SUGGESTION,
+			'3' => _CO_DOWNLOADS_REVIEW_PROBLEM,
+			'4' => _CO_DOWNLOADS_REVIEW_QUESTION,
+			default => '',
+		};
 	}
 
 	public function getReviewItem() {

@@ -19,51 +19,101 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsReviewHandler extends icms_ipf_Handler {
+/**
+ * Review Handler with Fluent Interface
+ *
+ * Manages CRUD operations for review objects with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsReviewHandler extends icms_ipf_Handler
+{
 	/**
-	 * constructor
+	 * Constructor
+	 *
+	 * @param icms_db_legacy_Database $db Database connection
 	 */
-	public function __construct(&$db) {
+	public function __construct(icms_db_legacy_Database &$db)
+	{
 		parent::__construct($db, "review", "review_id", "review_item_id", "review_message", "downloads");
 	}
 
-	public function getReviews($start = 0, $limit = 0, $order = 'review_date', $sort = 'DESC' , $review_item_id = null) {
+	/**
+	 * Get reviews for an item
+	 *
+	 * @param int $start Starting position
+	 * @param int $limit Number of items to retrieve
+	 * @param string $order Order field
+	 * @param string $sort Sort direction
+	 * @param int|null $review_item_id Item ID to filter by
+	 * @return array Array of reviews
+	 */
+	public function getReviews(
+		int $start = 0,
+		int $limit = 0,
+		string $order = 'review_date',
+		string $sort = 'DESC',
+		?int $review_item_id = null
+	): array {
 		$criteria = new icms_db_criteria_Compo();
-		if ($start) $criteria->setStart($start);
-		if ($limit) $criteria->setLimit((int)$limit);
+		if ($start) {
+			$criteria->setStart($start);
+		}
+		if ($limit) {
+			$criteria->setLimit($limit);
+		}
 		$criteria->setSort($order);
 		$criteria->setOrder($sort);
 		$criteria->add(new icms_db_criteria_Item('review_item_id', $review_item_id));
-		$reviews = $this->getObjects($criteria, TRUE, FALSE);
-		$ret = array();
-		foreach ($reviews as $review){
+
+		$reviews = $this->getObjects($criteria, true, false);
+		$ret = [];
+		foreach ($reviews as $review) {
 			$ret[$review['review_id']] = $review;
 		}
 		return $ret;
 	}
 
-	public function getCase() {
-		$cases = array(1 => _CO_DOWNLOADS_REVIEW_PRAISE, 2 => _CO_DOWNLOADS_REVIEW_SUGGESTION, 3 => _CO_DOWNLOADS_REVIEW_PROBLEM, 4 => _CO_DOWNLOADS_REVIEW_QUESTION);
-		return $cases;
+	/**
+	 * Get review case options
+	 *
+	 * @return array Case options
+	 */
+	public function getCase(): array
+	{
+		return [
+			1 => _CO_DOWNLOADS_REVIEW_PRAISE,
+			2 => _CO_DOWNLOADS_REVIEW_SUGGESTION,
+			3 => _CO_DOWNLOADS_REVIEW_PROBLEM,
+			4 => _CO_DOWNLOADS_REVIEW_QUESTION
+		];
 	}
 
-	protected function beforeInsert(& $obj) {
+	/**
+	 * Before insert hook
+	 *
+	 * @param DownloadsReview $obj Review object
+	 * @return bool True on success
+	 */
+	protected function beforeInsert(DownloadsReview &$obj): bool
+	{
 		$message = $obj->getVar("review_message", "s");
-		$smessage = strip_tags($message,'<b><i><a><br>');
+		$smessage = strip_tags($message, '<b><i><a><br>');
 		$smessage = icms_core_DataFilter::checkVar($smessage, "html", "input");
 		$obj->setVar("review_message", $smessage);
 
 		$email = $obj->getVar("review_email", "s");
-		if(icms::$module->config['display_reviews_email'] == 1) {
-			$email = icms_core_DataFilter::checkVar($email, 'email', 1, 0);
-		} elseif(icms::$module->config['display_reviews_email'] == 2) {
-			$email = icms_core_DataFilter::checkVar($email, 'email', 0, 0);
-		} elseif(icms::$module->config['display_reviews_email'] == 3) {
-			$email = icms_core_DataFilter::checkVar($email, 'email', 1, 1);
-		} elseif(icms::$module->config['display_reviews_email'] == 4) {
-			$email = icms_core_DataFilter::checkVar($email, 'email', 0, 1);
-		}
+		$displayConfig = icms::$module->config['display_reviews_email'];
+
+		$email = match ($displayConfig) {
+			1 => icms_core_DataFilter::checkVar($email, 'email', 1, 0),
+			2 => icms_core_DataFilter::checkVar($email, 'email', 0, 0),
+			3 => icms_core_DataFilter::checkVar($email, 'email', 1, 1),
+			4 => icms_core_DataFilter::checkVar($email, 'email', 0, 1),
+			default => $email,
+		};
+
 		$obj->setVar("review_email", $email);
-		return TRUE;
+		return true;
 	}
 }

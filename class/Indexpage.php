@@ -19,9 +19,22 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsIndexpage extends icms_ipf_seo_Object {
-	
-	public function __construct(&$handler) {
+/**
+ * Indexpage entity class
+ *
+ * Represents the index page configuration with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsIndexpage extends icms_ipf_seo_Object
+{
+	/**
+	 * Constructor
+	 *
+	 * @param icms_ipf_Handler $handler Handler instance
+	 */
+	public function __construct(icms_ipf_Handler &$handler)
+	{
 		parent::__construct($handler);
 
 		$this->quickInitVar("index_key", XOBJ_DTYPE_INT, TRUE);
@@ -42,34 +55,61 @@ class DownloadsIndexpage extends icms_ipf_seo_Object {
 		$this->setControl('index_image', array( 'name' => 'select', 'itemHandler' => 'indexpage', 'method' => 'getImageList', 'module' => 'downloads'));
 	}
 
-	public function getIndexImg() {
-		$indeximage = $image_tag = '';
+	/**
+	 * Get index image HTML
+	 *
+	 * @return string Image HTML or empty string
+	 */
+	public function getIndexImg(): string
+	{
 		$indeximage = $this->getVar('index_image', 'e');
-		if (!$indeximage == 0 && !$indeximage == "") {
+		if ($indeximage != 0 && $indeximage != "") {
 			$image_tag = DOWNLOADS_UPLOAD_URL . 'indexpage/' . $indeximage;
-			return '<div class="downloads_indeximage"><img src="' . $image_tag . '" /></div>';
+			return sprintf('<div class="downloads_indeximage"><img src="%s" /></div>', $image_tag);
 		}
+		return '';
 	}
-	
-	public function getIndexHeader() {
-		$indexheader = '';
+
+	/**
+	 * Get index header HTML
+	 *
+	 * @return string Header HTML
+	 */
+	public function getIndexHeader(): string
+	{
 		$indexheader = $this->getVar('index_header', 'e');
-		return '<div class="downloads_indexheader">' . $indexheader . '</div>';
+		return sprintf('<div class="downloads_indexheader">%s</div>', $indexheader);
 	}
 
-	public function getIndexHeading() {
-		$indexheading = '';
+	/**
+	 * Get index heading HTML
+	 *
+	 * @return string Heading HTML
+	 */
+	public function getIndexHeading(): string
+	{
 		$indexheading = icms_core_DataFilter::checkVar($this->getVar('index_heading', 's'), 'html', 'output');
-		return '<div class="downloads_indexheading">' . $indexheading . '</div>';
-	}
-	
-	public function getIndexFooter() {
-		$indexfooter = '';
-		$indexfooter = icms_core_DataFilter::checkVar($this->getVar('index_footer', 's'), 'html', 'output');
-		return '<div class="downloads_indexfooter">' . $indexfooter . '</div>';
+		return sprintf('<div class="downloads_indexheading">%s</div>', $indexheading);
 	}
 
-	function toArray() {
+	/**
+	 * Get index footer HTML
+	 *
+	 * @return string Footer HTML
+	 */
+	public function getIndexFooter(): string
+	{
+		$indexfooter = icms_core_DataFilter::checkVar($this->getVar('index_footer', 's'), 'html', 'output');
+		return sprintf('<div class="downloads_indexfooter">%s</div>', $indexfooter);
+	}
+
+	/**
+	 * Convert object to array
+	 *
+	 * @return array Object data as array
+	 */
+	public function toArray(): array
+	{
 		$ret = parent::toArray();
 		$ret['image'] = $this->getIndexImg();
 		$ret['header'] = $this->getIndexHeader();
@@ -79,4 +119,3 @@ class DownloadsIndexpage extends icms_ipf_seo_Object {
 	}
 	
 }
-	

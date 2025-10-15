@@ -20,11 +20,21 @@
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
 /**
- * Class for download log
+ * Log entity class
+ *
+ * Represents a download log entry with modern PHP 8.2+ features
+ *
+ * @package Downloads
  */
-class DownloadsLog extends icms_ipf_Object {
-
-	function __construct(&$handler) {
+class DownloadsLog extends icms_ipf_Object
+{
+	/**
+	 * Constructor
+	 *
+	 * @param icms_ipf_Handler $handler Handler instance
+	 */
+	public function __construct(icms_ipf_Handler &$handler)
+	{
 		icms_ipf_object::__construct($handler);
 
 		$this->quickInitVar('log_id', XOBJ_DTYPE_INT, TRUE);
@@ -37,89 +47,98 @@ class DownloadsLog extends icms_ipf_Object {
 
 	}
 
-	public function getLogIP() {
-		$ip = "";
+	/**
+	 * Get log IP address
+	 *
+	 * @return string Filtered IP address
+	 */
+	public function getLogIP(): string
+	{
 		$ip = $this->getVar("log_ip", "s");
-		$ip = icms_core_DataFilter::checkVar($ip, "ip", "ipv4");
-		return $ip;
+		return icms_core_DataFilter::checkVar($ip, "ip", "ipv4");
 	}
 
-	public function getLogDate() {
-		$date = '';
+	/**
+	 * Get formatted log date
+	 *
+	 * @return string Formatted date
+	 */
+	public function getLogDate(): string
+	{
 		$date = $this->getVar('log_date', 'e');
-
 		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
-	public function getLogItemId() {
+	/**
+	 * Get log item ID with link
+	 *
+	 * @return string HTML link to item
+	 */
+	public function getLogItemId(): string
+	{
 		$item_id = $this->getVar("log_item_id", "e");
 		$item = $this->getVar("log_item", "e");
 		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
 		$downloads_category_handler = icms_getModuleHandler("category", basename(dirname(__DIR__)), "downloads");
-		if($item == 0){
+
+		if ($item == 0) {
 			$file = $downloads_download_handler->get($item_id);
 			$filename = $file->getVar("download_title", "s");
 			$url = DOWNLOADS_URL . 'singledownload.php?download_id=' . $item_id;
-			return '<a href="' . $url . '" title="' . $filename . '">' . $filename . '</a>';
+			return sprintf('<a href="%s" title="%s">%s</a>', $url, $filename, $filename);
 		} elseif ($item == 1) {
 			$cat = $downloads_category_handler->get($item_id);
 			$catname = $cat->getVar("category_title", "s");
 			$url = DOWNLOADS_URL . 'index.php?category_id=' . $item_id;
-			return '<a href="' . $url . '" title="' . $catname . '">' . $catname . '</a>';
+			return sprintf('<a href="%s" title="%s">%s</a>', $url, $catname, $catname);
 		}
+
+		return '';
 	}
 
-	public function getLogItem() {
+	/**
+	 * Get log item type
+	 *
+	 * @return string Item type label
+	 */
+	public function getLogItem(): string
+	{
 		$item = $this->getVar("log_item", "e");
-		switch ($item) {
-			case '0':
-				return 'file';
-				break;
-
-			case '1':
-				return 'category';
-				break;
-		}
+		return match ($item) {
+			'0' => 'file',
+			'1' => 'category',
+			default => '',
+		};
 	}
 
-	public function getLogCase() {
+	/**
+	 * Get log case/action type
+	 *
+	 * @return string Case label
+	 */
+	public function getLogCase(): string
+	{
 		$item = $this->getVar("log_case", "e");
-		switch ($item) {
-			case '0':
-				return 'download';
-				break;
-
-			case '1':
-				return 'create';
-				break;
-
-			case '2':
-				return 'delete';
-				break;
-
-			case '3':
-				return 'updated';
-				break;
-
-			case '4':
-				return 'download mirror';
-				break;
-
-			case '5':
-				return 'vote up';
-				break;
-
-			case '6':
-				return 'vote down';
-				break;
-
-			case '7':
-				return 'report broken';
-				break;
-		}
+		return match ($item) {
+			'0' => 'download',
+			'1' => 'create',
+			'2' => 'delete',
+			'3' => 'updated',
+			'4' => 'download mirror',
+			'5' => 'vote up',
+			'6' => 'vote down',
+			'7' => 'report broken',
+			default => '',
+		};
 	}
 
-	function toArray() {
+	/**
+	 * Convert object to array
+	 *
+	 * @return array Object data as array
+	 */
+	public function toArray(): array
+	{
 		$ret = parent::toArray();
 		$ret['date'] = $this->getLogDate();
 		$ret['item_id'] = $this->getLogItemId();

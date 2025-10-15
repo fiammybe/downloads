@@ -19,26 +19,59 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsLogHandler extends icms_ipf_Handler {
+/**
+ * Log Handler with Fluent Interface
+ *
+ * Manages CRUD operations for log objects with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsLogHandler extends icms_ipf_Handler
+{
 	/**
-	 * constructor
+	 * Constructor
+	 *
+	 * @param icms_db_legacy_Database $db Database connection
 	 */
-	public function __construct(&$db) {
+	public function __construct(icms_db_legacy_Database &$db)
+	{
 		parent::__construct($db, "log", "log_id", "log_item_id", "log_date", "downloads");
 	}
 
-	public function clearLogDB($value='') {
-		$time = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysnew'] ) ) );
-
+	/**
+	 * Clear old log entries from database
+	 *
+	 * @param string $value Unused parameter
+	 * @return void
+	 */
+	public function clearLogDB(string $value = ''): void
+	{
+		$time = time() - (86400 * (int)icms::$module->config['downloads_daysnew']);
+		// TODO: Implement log cleanup logic
 	}
 
-	protected function beforeInsert(&$obj){
+	/**
+	 * Before insert hook
+	 *
+	 * @param DownloadsLog $obj Log object
+	 * @return bool True on success
+	 */
+	protected function beforeInsert(DownloadsLog &$obj): bool
+	{
 		$ip = $obj->getVar("log_ip", "s");
 		$ip = icms_core_DataFilter::checkVar($ip, "ip", "ipv4");
-		return TRUE;
+		$obj->setVar("log_ip", $ip);
+		return true;
 	}
 
-	protected function beforeSafe(&$obj) {
+	/**
+	 * Before save hook
+	 *
+	 * @param DownloadsLog $obj Log object
+	 * @return bool True on success
+	 */
+	protected function beforeSafe(DownloadsLog &$obj): bool
+	{
 		$item_id = $obj->getVar("log_item_id");
 		$item = $obj->getVar("log_item");
 		$case = $obj->getVar("log_case");
@@ -49,8 +82,6 @@ class DownloadsLogHandler extends icms_ipf_Handler {
 		$criteria->add(new icms_db_criteria_Item("log_case", $case));
 		$log_total = $this->getCount($criteria);
 
+		return true;
 	}
-
-
-
 }

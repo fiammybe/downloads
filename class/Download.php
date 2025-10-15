@@ -19,15 +19,25 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsDownload extends icms_ipf_seo_Object {
+/**
+ * Download entity class
+ *
+ * Represents a download item with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsDownload extends icms_ipf_seo_Object
+{
+	public bool $updating_counter = false;
 
-	public $updating_counter = FALSE;
-
-	public function __construct(&$handler) {
-
-		icms_ipf_object::__construct($handler);
-
-
+	/**
+	 * Constructor
+	 *
+	 * @param icms_ipf_Handler $handler Handler instance
+	 */
+	public function __construct(icms_ipf_Handler &$handler)
+	{
+		parent::__construct($handler);
 
 		$this->quickInitVar('download_id', XOBJ_DTYPE_INT, TRUE);
 		$this->quickInitVar('download_title', XOBJ_DTYPE_TXTBOX, TRUE);
@@ -585,7 +595,7 @@ class DownloadsDownload extends icms_ipf_seo_Object {
 		}
 	}
 
-	function accessGranted($perm_name) {
+	function accessGranted($perm_name = null) {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
 		$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));

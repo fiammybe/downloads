@@ -19,14 +19,25 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
-class DownloadsCategory extends icms_ipf_seo_Object {
+/**
+ * Category entity class
+ *
+ * Represents a download category with modern PHP 8.2+ features
+ *
+ * @package Downloads
+ */
+class DownloadsCategory extends icms_ipf_seo_Object
+{
+	public bool $updating_counter = false;
+	public bool $categories = true;
 
-	public $updating_counter = FALSE;
-
-	public $categories = TRUE;
-
-	public function __construct(&$handler) {
-
+	/**
+	 * Constructor
+	 *
+	 * @param icms_ipf_Handler $handler Handler instance
+	 */
+	public function __construct(icms_ipf_Handler &$handler)
+	{
 		icms_ipf_object::__construct($handler);
 
 		$this->quickInitVar('category_id', XOBJ_DTYPE_INT, TRUE);
@@ -72,150 +83,309 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		$this->initiateSEO();
 	}
 
-	// get publisher as userlink
-	function getCategoryPublisher($link = FALSE) {
+	/**
+	 * Get publisher as userlink
+	 *
+	 * @param bool $link Whether to return as link
+	 * @return string Publisher userlink
+	 */
+	public function getCategoryPublisher(bool $link = false): string
+	{
 		return icms_member_user_Handler::getUserLink($this->getVar('category_publisher', 'e'));
 	}
 
-	public function getCategoryPublishedDate() {
-
+	/**
+	 * Get formatted published date
+	 *
+	 * @return string Formatted date
+	 */
+	public function getCategoryPublishedDate(): string
+	{
 		$date = $this->getVar('category_published_date', 'e');
 		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
-	public function getCategoryUpdatedDate() {
-
+	/**
+	 * Get formatted updated date
+	 *
+	 * @return string Formatted date
+	 */
+	public function getCategoryUpdatedDate(): string
+	{
 		$date = $this->getVar('category_updated_date', 'e');
 		return date(icms::$module->config['downloads_dateformat'], $date);
 	}
 
-	public function getCategoryImageTag() {
-		$category_img = $image_tag = '';
+	/**
+	 * Get category image tag
+	 *
+	 * @return string Image URL or empty string
+	 */
+	public function getCategoryImageTag(): string
+	{
 		$category_img = $this->getVar('category_img', 'e');
 		if (!empty($category_img)) {
-			$image_tag = DOWNLOADS_UPLOAD_URL . 'category/' . $category_img;
+			return DOWNLOADS_UPLOAD_URL . 'category/' . $category_img;
 		}
-		return $image_tag;
+		return '';
 	}
 
-	public function category_active() {
+	/**
+	 * Get category active status with toggle link
+	 *
+	 * @return string HTML link with status image
+	 */
+	public function category_active(): string
+	{
 		$active = $this->getVar('category_active', 'e');
-		if ($active == FALSE) {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=visible">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'hidden.png" alt="Offline" /></a>';
-		} else {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=visible">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'visible.png" alt="Online" /></a>';
-		}
+		$categoryId = $this->getVar('category_id');
+		$icon = $active ? 'visible.png' : 'hidden.png';
+		$alt = $active ? 'Online' : 'Offline';
+
+		return sprintf(
+			'<a href="%scategory.php?category_id=%d&amp;op=visible"><img src="%s%s" alt="%s" /></a>',
+			DOWNLOADS_ADMIN_URL,
+			$categoryId,
+			DOWNLOADS_IMAGES_URL,
+			$icon,
+			$alt
+		);
 	}
 
-	public function category_inblocks() {
+	/**
+	 * Get category in blocks status with toggle link
+	 *
+	 * @return string HTML link with status image
+	 */
+	public function category_inblocks(): string
+	{
 		$active = $this->getVar('category_inblocks', 'e');
-		if ($active == FALSE) {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=changeShow">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'denied.png" alt="Hidden" /></a>';
-		} else {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=changeShow">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'approved.png" alt="Visible" /></a>';
-		}
+		$categoryId = $this->getVar('category_id');
+		$icon = $active ? 'approved.png' : 'denied.png';
+		$alt = $active ? 'Visible' : 'Hidden';
+
+		return sprintf(
+			'<a href="%scategory.php?category_id=%d&amp;op=changeShow"><img src="%s%s" alt="%s" /></a>',
+			DOWNLOADS_ADMIN_URL,
+			$categoryId,
+			DOWNLOADS_IMAGES_URL,
+			$icon,
+			$alt
+		);
 	}
 
-	public function category_approve() {
+	/**
+	 * Get category approve status with toggle link
+	 *
+	 * @return string HTML link with status image
+	 */
+	public function category_approve(): string
+	{
 		$active = $this->getVar('category_approve', 'e');
-		if ($active == FALSE) {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=changeApprove">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'denied.png" alt="Denied" /></a>';
-		} else {
-			return '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?category_id=' . $this->getVar('category_id') . '&amp;op=changeApprove">
-				<img src="' . DOWNLOADS_IMAGES_URL . 'approved.png" alt="Approved" /></a>';
-		}
+		$categoryId = $this->getVar('category_id');
+		$icon = $active ? 'approved.png' : 'denied.png';
+		$alt = $active ? 'Approved' : 'Denied';
+
+		return sprintf(
+			'<a href="%scategory.php?category_id=%d&amp;op=changeApprove"><img src="%s%s" alt="%s" /></a>',
+			DOWNLOADS_ADMIN_URL,
+			$categoryId,
+			DOWNLOADS_IMAGES_URL,
+			$icon,
+			$alt
+		);
 	}
 
-	public function getCategoryWeightControl() {
-		$control = new icms_form_elements_Text( '', 'weight[]', 5, 7,$this -> getVar( 'weight', 'e' ) );
-		$control->setExtra( 'style="text-align:center;"' );
+	/**
+	 * Get category weight control
+	 *
+	 * @return string Rendered weight control
+	 */
+	public function getCategoryWeightControl(): string
+	{
+		$control = new icms_form_elements_Text('', 'weight[]', 5, 7, $this->getVar('weight', 'e'));
+		$control->setExtra('style="text-align:center;"');
 		return $control->render();
 	}
 
-	function category_pid() {
+	/**
+	 * Get parent category
+	 *
+	 * @return string Parent category link or name
+	 */
+	public function category_pid(): string
+	{
 		static $category_pidArray;
 		if (!is_array($category_pidArray)) {
 			$category_pidArray = $this->handler->getCategoryListForPid();
 		}
 		$ret = $this->getVar('category_pid', 'e');
 		if ($ret > 0) {
-			$ret = '<a href="' . DOWNLOADS_URL . 'index.php?category_id=' . $ret . '">' . str_replace('-', '', $category_pidArray[$ret]) . '</a>';
-		} else {
-			$ret = $category_pidArray[$ret];
+			return sprintf(
+				'<a href="%sindex.php?category_id=%d">%s</a>',
+				DOWNLOADS_URL,
+				$ret,
+				str_replace('-', '', $category_pidArray[$ret])
+			);
 		}
-		return $ret;
+		return $category_pidArray[$ret];
 	}
 
-	function submitAccessGranted() {
+	/**
+	 * Check if user has submit access
+	 *
+	 * @return bool True if access granted
+	 */
+	public function submitAccessGranted(): bool
+	{
 		$gperm_handler = icms::handler('icms_member_groupperm');
-		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
-		$module = icms::handler('icms_module')->getByDirname(basename(dirname(dirname(__FILE__))));
-		$viewperm = $gperm_handler->checkRight('submit_downloads', $this->getVar('category_id', 'e'), $groups, $module->getVar("mid"));
-		if (is_object(icms::$user) && icms::$user->getVar("uid") == $this->getVar('category_publisher', 'e')) {
-			return TRUE;
+		$groups = is_object(icms::$user) ? icms::$user->getGroups() : [ICMS_GROUP_ANONYMOUS];
+		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__DIR__)));
+		$viewperm = $gperm_handler->checkRight(
+			'submit_downloads',
+			$this->getVar('category_id', 'e'),
+			$groups,
+			$module->getVar('mid')
+		);
+
+		if (is_object(icms::$user) && icms::$user->getVar('uid') == $this->getVar('category_publisher', 'e')) {
+			return true;
 		}
-		if ($viewperm && ($this->getVar('category_active', 'e') == TRUE) && ($this->getVar('category_approve', 'e') == TRUE)) {
-			return TRUE;
-		}
-		return FALSE;
+
+		return $viewperm
+			&& $this->getVar('category_active', 'e') == true
+			&& $this->getVar('category_approve', 'e') == true;
 	}
 
-	function accessGranted($perm_name = null) {
+	/**
+	 * Check if user has access to view category
+	 *
+	 * @param string|null $perm_name Permission name
+	 * @return bool True if access granted
+	 */
+	public function accessGranted(?string $perm_name = null): bool
+	{
 		$gperm_handler = icms::handler('icms_member_groupperm');
-		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
+		$groups = is_object(icms::$user) ? icms::$user->getGroups() : [ICMS_GROUP_ANONYMOUS];
 		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__FILE__, 2)));
-		$viewperm = $gperm_handler->checkRight('category_grpperm', $this->getVar('category_id', 'e'), $groups, icms::$module->getVar("mid"));
-		if (is_object(icms::$user) && icms::$user->getVar("uid") == $this->getVar('category_publisher', 'e')) {
-			return TRUE;
+		$viewperm = $gperm_handler->checkRight(
+			'category_grpperm',
+			$this->getVar('category_id', 'e'),
+			$groups,
+			icms::$module->getVar('mid')
+		);
+
+		if (is_object(icms::$user) && icms::$user->getVar('uid') == $this->getVar('category_publisher', 'e')) {
+			return true;
 		}
-		if ($viewperm && ($this->getVar('category_active', 'e') == TRUE) && ($this->getVar('category_approve', 'e') == TRUE)) {
-			return TRUE;
-		}
-		return FALSE;
+
+		return $viewperm
+			&& $this->getVar('category_active', 'e') == true
+			&& $this->getVar('category_approve', 'e') == true;
 	}
 
-	function userCanEditAndDelete() {
+	/**
+	 * Check if user can edit and delete category
+	 *
+	 * @return bool True if user can edit/delete
+	 */
+	public function userCanEditAndDelete(): bool
+	{
 		global $downloads_isAdmin;
-		if (!is_object(icms::$user)) return FALSE;
-		if ($downloads_isAdmin) return TRUE;
-		return $this->getVar('category_publisher', 'e') == icms::$user->getVar("uid");
-	}
-
-	public function getViewItemLink($onlyUrl = FALSE, $linkTitle = FALSE, $linkTarget = FALSE) {
-		$ret = '<a href="' . DOWNLOADS_ADMIN_URL . 'category.php?op=view&amp;category_id=' . $this->getVar('category_id', 'e') . '" title="' . _CO_DOWNLOADS_VIEW . '"><img src="' . ICMS_IMAGES_SET_URL . '/actions/viewmag.png" /></a>';
-		return $ret;
-	}
-
-	function getItemLink($onlyUrl = FALSE) {
-		$seo = $this->handler->makelink($this);
-		$url = DOWNLOADS_URL . 'index.php?category_id=' . $this -> getVar( 'category_id' ) . '&amp;cat=' . $seo;
-		if ($onlyUrl) return $url;
-		return '<a href="' . $url . '" title="' . $this -> getVar( 'category_title' ) . ' ">' . $this -> getVar( 'category_title' ) . '</a>';
-	}
-
-	function getPreviewItemLink() {
-		$ret = '<a href="' . DOWNLOADS_URL . 'index.php?category_id=' . $this->getVar('category_id', 'e') . '" title="' . _CO_DOWNLOADS_PREVIEW . '" target="_blank">' . $this->getVar('category_title') . '</a>';
-		return $ret;
-	}
-
-	public function getUserCanSubmitFile() {
-		$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__DIR__)), "downloads");
-
-	}
-
-	public function userCanSubmit() {
-		$submit = $this->handler->userCanSubmit();
-		if($submit) {
-			$link = DOWNLOADS_URL . 'category.php?op=mod&amp;category_pid=' . $this->getVar("category_id", "e");
-		} else {
-			$link = FALSE;
+		if (!is_object(icms::$user)) {
+			return false;
 		}
-		return $link;
+		if ($downloads_isAdmin) {
+			return true;
+		}
+		return $this->getVar('category_publisher', 'e') == icms::$user->getVar('uid');
+	}
+
+	/**
+	 * Get view item link
+	 *
+	 * @param bool $onlyUrl Return only URL
+	 * @param bool $linkTitle Link title
+	 * @param bool $linkTarget Link target
+	 * @return string View link HTML
+	 */
+	public function getViewItemLink(bool $onlyUrl = false, bool $linkTitle = false, bool $linkTarget = false): string
+	{
+		return sprintf(
+			'<a href="%scategory.php?op=view&amp;category_id=%d" title="%s"><img src="%s/actions/viewmag.png" /></a>',
+			DOWNLOADS_ADMIN_URL,
+			$this->getVar('category_id', 'e'),
+			_CO_DOWNLOADS_VIEW,
+			ICMS_IMAGES_SET_URL
+		);
+	}
+
+	/**
+	 * Get item link
+	 *
+	 * @param bool $onlyUrl Return only URL
+	 * @return string Item link or URL
+	 */
+	public function getItemLink(bool $onlyUrl = false): string
+	{
+		$seo = $this->handler->makelink($this);
+		$url = sprintf(
+			'%sindex.php?category_id=%d&amp;cat=%s',
+			DOWNLOADS_URL,
+			$this->getVar('category_id'),
+			$seo
+		);
+
+		if ($onlyUrl) {
+			return $url;
+		}
+
+		return sprintf(
+			'<a href="%s" title="%s">%s</a>',
+			$url,
+			$this->getVar('category_title'),
+			$this->getVar('category_title')
+		);
+	}
+
+	/**
+	 * Get preview item link
+	 *
+	 * @return string Preview link HTML
+	 */
+	public function getPreviewItemLink(): string
+	{
+		return sprintf(
+			'<a href="%sindex.php?category_id=%d" title="%s" target="_blank">%s</a>',
+			DOWNLOADS_URL,
+			$this->getVar('category_id', 'e'),
+			_CO_DOWNLOADS_PREVIEW,
+			$this->getVar('category_title')
+		);
+	}
+
+	/**
+	 * Check if user can submit file (placeholder)
+	 *
+	 * @return void
+	 */
+	public function getUserCanSubmitFile(): void
+	{
+		// Placeholder method
+	}
+
+	/**
+	 * Check if user can submit and return link
+	 *
+	 * @return string|false Submit link or false
+	 */
+	public function userCanSubmit(): string|false
+	{
+		$submit = $this->handler->userCanSubmit();
+		if ($submit) {
+			return DOWNLOADS_URL . 'category.php?op=mod&amp;category_pid=' . $this->getVar('category_id', 'e');
+		}
+		return false;
 	}
 
 	function toArray() {

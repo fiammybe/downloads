@@ -98,6 +98,10 @@ $modversion['object_items'][$i] = 'indexpage';
 $i++;
 $modversion['object_items'][$i] = 'review';
 $i++;
+
+// SQL schema file
+$modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
+
 $modversion['object_items'][$i] = 'log';
 
 $modversion['tables'] = icms_getTablesArray( $modversion['dirname'], $modversion['object_items'] );

@@ -3,28 +3,37 @@
  * 'Downloads' is a light weight download handling module for ImpressCMS
  *
  * File: /admin/review.php
- * 
- * edit & view Downloads reviews
- * 
+ *
+ * Edit & view Downloads reviews - Modernized for ImpressCMS 2.0+
+ *
  * @copyright	Copyright QM-B (Steffen Flohrer) 2011
+ * @copyright	The ImpressCMS Project
  * @license		http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU General Public License (GPL)
  * ----------------------------------------------------------------------------------------------------------
  * 				Downloads
  * @since		1.00
  * @author		QM-B <qm-b@hotmail.de>
- * @version		$Id$
+ * @author		fiammybe (refactoring for 2.0)
+ * @version		2.0.0
  * @package		downloads
  *
  */
 
-function editreview($review_id = 0) {
+/**
+ * Display the review edit form
+ *
+ * @param int $review_id The review ID
+ * @return void
+ */
+function editreview(int $review_id = 0): void
+{
 	global $downloads_review_handler, $icmsAdminTpl;
-	
+
 	$reviewObj = $downloads_review_handler->get($review_id);
-	
-	if (!$reviewObj->isNew()){
-		$reviewObj->hideFieldFromForm(array( 'review_ip', 'review_date', 'review_uid' ) );
-		downloads_adminmenu( 4, _MI_DOWNLOADS_MENU_REVIEW  . " > " . _CO_DOWNLOADS_EDIT);
+
+	if (!$reviewObj->isNew()) {
+		$reviewObj->hideFieldFromForm(['review_ip', 'review_date', 'review_uid']);
+		downloads_adminmenu(4, _MI_DOWNLOADS_MENU_REVIEW . ' > ' . _CO_DOWNLOADS_EDIT);
 		$sform = $reviewObj->getForm(_CO_DOWNLOADS_EDIT, 'addreview');
 		$sform->assign($icmsAdminTpl);
 	} else {
@@ -32,64 +41,63 @@ function editreview($review_id = 0) {
 	}
 	$icmsAdminTpl->display('db:downloads_admin.html');
 }
- 
-include_once "admin_header.php";
 
-$clean_review_id = isset($_GET['review_id']) ? (int)$_GET['review_id'] : 0 ;
+include_once 'admin_header.php';
 
-$downloads_review_handler = icms_getModuleHandler("review", basename(dirname(__DIR__)), "downloads");
-
-$valid_op = array ('mod', 'del', 'view','addreview', '');
-
+$clean_review_id = isset($_GET['review_id']) ? (int)$_GET['review_id'] : 0;
+$downloads_review_handler = icms_getModuleHandler('review', basename(dirname(__DIR__)), 'downloads');
+$valid_op = ['mod', 'del', 'view', 'addreview', ''];
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
 
-if (in_array($clean_op, $valid_op, TRUE)){
-	switch ($clean_op) {
-		case 'mod':
+if (in_array($clean_op, $valid_op, true)) {
+	match ($clean_op) {
+		'mod' => (function() use ($clean_review_id) {
 			icms_cp_header();
 			editreview($clean_review_id);
-			break;
-		
-		case 'del':
+			icms_cp_footer();
+		})(),
+		'del' => (function() use ($downloads_review_handler) {
 			$controller = new icms_ipf_Controller($downloads_review_handler);
 			$controller->handleObjectDeletion();
-			break;
-
-		case 'addreview':
+		})(),
+		'addreview' => (function() use ($downloads_review_handler) {
 			$controller = new icms_ipf_Controller($downloads_review_handler);
 			$controller->storeFromDefaultForm(_AM_DOWNLOADS_CREATED, _AM_DOWNLOADS_MODIFIED);
-			break;
-		
-		case 'view':
+		})(),
+		'view' => (function() use ($downloads_review_handler, $clean_review_id) {
 			$reviewObj = $downloads_review_handler->get($clean_review_id);
 			icms_cp_header();
-			downloads_adminmenu( 4, _MI_DOWNLOADS_MENU_REVIEW );
+			downloads_adminmenu(4, _MI_DOWNLOADS_MENU_REVIEW);
 			$reviewObj->displaySingleObject();
-			break;
-		
-		default:
+			icms_cp_footer();
+		})(),
+		default => (function() use ($downloads_review_handler, $clean_review_id) {
+			global $icmsAdminTpl;
+
 			icms_cp_header();
-			downloads_adminmenu( 4, _MI_DOWNLOADS_MENU_REVIEW );
-			$criteria = '';
+			downloads_adminmenu(4, _MI_DOWNLOADS_MENU_REVIEW);
+
 			if ($clean_review_id) {
 				$reviewObj = $downloads_review_handler->get($clean_review_id);
 				if ($reviewObj->id()) {
 					$reviewObj->displaySingleObject();
 				}
 			}
-			if (empty($criteria)) {
-				$criteria = null;
-			}
-			// create downloads table
+
+			$criteria = null;
+
+			// Create reviews table
 			$objectTable = new icms_ipf_view_Table($downloads_review_handler, $criteria);
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_item_id', 'center', 50, 'getReviewItem' ) );
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_name', FALSE, FALSE, 'getReviewName' ) );
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_email') );
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_message',FALSE, FALSE, 'getReviewMessage'));
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_date', 'center', 50, 'getReviewDate' ) );			
-			$icmsAdminTpl->assign( 'downloads_review_table', $objectTable->fetch() );
-			$icmsAdminTpl->display( 'db:downloads_admin.html' );
-			break;
-	}
-	icms_cp_footer();
+			$objectTable->addColumn(new icms_ipf_view_Column('review_item_id', 'center', 50, 'getReviewItem'));
+			$objectTable->addColumn(new icms_ipf_view_Column('review_name', false, false, 'getReviewName'));
+			$objectTable->addColumn(new icms_ipf_view_Column('review_email'));
+			$objectTable->addColumn(new icms_ipf_view_Column('review_message', false, false, 'getReviewMessage'));
+			$objectTable->addColumn(new icms_ipf_view_Column('review_date', 'center', 50, 'getReviewDate'));
+
+			$icmsAdminTpl->assign('downloads_review_table', $objectTable->fetch());
+			$icmsAdminTpl->display('db:downloads_admin.html');
+
+			icms_cp_footer();
+		})()
+	};
 }
