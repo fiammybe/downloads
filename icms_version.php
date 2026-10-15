@@ -25,14 +25,14 @@
 
 $modversion = array(
 					'name'						=> _MI_DOWNLOADS_NAME,
-					'version'					=> '1.2',
+					'version'					=> '1.3',
 					'description'				=> _MI_DOWNLOADS_DSC,
 					'author'					=> "fiammybe",
 					'credits'					=> "based upon the work by QM-B, MacDonald, Sato-san and other members of the community",
 					'help'						=> "admin/manual.php",
 					'license'					=> "GNU General Public License v2 (GPLv2)",
 					'official'					=> 1,
-					'dirname'					=> basename( dirname( __FILE__ ) ),
+					'dirname'					=> basename(__DIR__),
 					'modname'					=> "downloads",
 
 					/**  Images information  */
@@ -41,11 +41,11 @@ $modversion = array(
 					'image'						=> "images/downloads_icon.png", /* for backward compatibility */
 
 					/**  Development information */
-					'status_version'			=> "1.2",
-					'status'					=> "final",
-					'date'						=> "12 Feb 2025",
-					'author_word'				=> "Restarted developmend of the downloads module. Now compatible with ImpressCMS 2",
-					'warning'					=> _CO_ICMS_WARNING_FINAL,
+					'status_version'			=> "1.3 beta",
+					'status'					=> "beta",
+					'date'						=> "15 Oct 2026",
+					'author_word'				=> "Compatible with PHP 8.2 and ImpressCMS 2.0.3",
+					'warning'					=> _CO_ICMS_WARNING_BETA,
 
 					/** Contributors */
 					'developer_website_url' 	=> "https://github.com/ImpressModules/downloads",
@@ -199,7 +199,7 @@ $modversion['blocks'][$i]['name']			= _MI_DOWNLOADS_BLOCK_CATEGORY_MENU;
 $modversion['blocks'][$i]['description']	= _MI_DOWNLOADS_BLOCK_CATEGORY_MENU_DSC;
 $modversion['blocks'][$i]['show_func']		= 'b_downloads_category_menu_show';
 $modversion['blocks'][$i]['edit_func']		= 'b_downloads_category_menu_edit';
-$modversion['blocks'][$i]['options']		= 'category_title|ASC|1|0';
+$modversion['blocks'][$i]['options']		= '0|1|category_title|ASC';
 $modversion['blocks'][$i]['template']		= 'downloads_block_category_menu.html';
 $modversion['blocks'][$i]['can_clone']		= TRUE ;
 // downloads gallery block

@@ -19,6 +19,8 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	private $_download_limitations = array();
@@ -33,45 +35,30 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	private $_download_cid = array();
 
-	public $_moduleName;
-
 	public function __construct(&$db) {
 		parent::__construct($db, "download", "download_id", "download_title", "download_description", "downloads");
 		$this->addPermission('download_grpperm', _CO_DOWNLOADS_DOWNLOAD_DOWNLOAD_GRPPERM, _CO_DOWNLOADS_DOWNLOAD_DOWNLOAD_GRPPERM_DSC);
-		$mimetypes = array('image/jpeg', 'image/png', 'image/gif');
-		$this->enableUpload($allowedMimeTypes = TRUE, icms::$module->config['image_file_size'], icms::$module->config['image_upload_width'], icms::$module->config['image_upload_height']);
-
-		$mimetypes = $this->checkMimeType();
-		$filesize = icms::$module->config['downloads_file_size'];
-		$this->enableUpload($mimetypes,	$filesize);
+		$config = $this->getDownloadsConfig();
+		// allowed mimetypes are taken from the system mimetype settings for this module
+		$this->enableUpload(FALSE, $config['downloads_file_size'] ?? FALSE, $config['image_upload_width'] ?? FALSE, $config['image_upload_height'] ?? FALSE);
 	}
 
-	public function checkMimeType() {
-		global $icmsModule;
-		$mimetypeHandler = icms_getModulehandler('mimetype', 'system');
-		$modulename = basename(dirname(dirname(__FILE__)));
-		if (empty($this->mediaRealType) && empty($this->allowUnknownTypes)) {
-			//icms_file_MediaUploadHandler::setErrors(_ER_UP_UNKNOWNFILETYPEREJECTED);
-			return FALSE;
-		}
-		$AllowedMimeTypes = $mimetypeHandler->AllowedModules($this->mediaRealType, $modulename);
-		if ((!empty($this->allowedMimeTypes) && !in_array($this->mediaRealType, $this->allowedMimeTypes))
-				|| (!empty($this->deniedMimeTypes) && in_array($this->mediaRealType, $this->deniedMimeTypes))
-				|| (empty($this->allowedMimeTypes) && !$AllowedMimeTypes))
-			{
-			icms_file_MediaUploadHandler::setErrors(sprintf(_ER_UP_MIMETYPENOTALLOWED, $this->mediaType));
-			return FALSE;
-		}
-		return TRUE;
+	/**
+	 * Get the configuration of this module, also when called from outside the module (blocks, search, ...)
+	 *
+	 * @return array
+	 */
+	public function getDownloadsConfig() {
+		return downloads_getConfig();
 	}
 
 	public function getList($criteria = null, $limit = 0, $start = 0, $debug = false) {
-		//$criteria = new icms_db_criteria_Compo();
-		if (isset($download_active)) {
-			$criteria->add(new icms_db_criteria_Item('download_active', TRUE));
+		if (!is_object($criteria)) {
+			$criteria = new icms_db_criteria_Compo();
 		}
 		$this->setGrantedObjectsCriteria($criteria, "download_grpperm");
 		$downloads = $this->getObjects($criteria, TRUE);
+		$ret = array();
 		$ret[0] = '-----------';
 		foreach(array_keys($downloads) as $i) {
 			$ret[$i] = $downloads[$i]->getVar('download_title');
@@ -130,7 +117,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 		$criteria->add(new icms_db_criteria_Item('download_approve', TRUE));
 		if($updated == TRUE) $criteria->add(new icms_db_criteria_Item('download_updated', TRUE));
 		if($popular == TRUE) {
-			$pop = icms::$module->config['downloads_popular'];
+			$config = $this->getDownloadsConfig();
+			$pop = (int)($config['downloads_popular'] ?? 0);
 			$critTray = new icms_db_criteria_Compo();
 			$critTray->add(new icms_db_criteria_Item('counter', $pop, ">="));
 			$criteria->add($critTray);
@@ -284,7 +272,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	public function getDownloadLimitations() {
 		if (!$this->_download_limitations) {
-			$limitations_array = explode(",", icms::$module->config['downloads_limitations']);
+			$config = $this->getDownloadsConfig();
+			$limitations_array = explode(",", (string)($config['downloads_limitations'] ?? ''));
 			foreach (array_keys($limitations_array) as $i) {
 				$this->_download_limitations[$limitations_array[$i]] = $limitations_array[$i];
 			}
@@ -294,8 +283,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	public function getDownloadLicense() {
 		if (!$this->_download_license) {
-			$license_array = explode(",", icms::$module->config['downloads_license']);
-			$license = array();
+			$config = $this->getDownloadsConfig();
+			$license_array = explode(",", (string)($config['downloads_license'] ?? ''));
 			foreach (array_keys($license_array) as $i) {
 				$this->_download_license[$license_array[$i]] = $license_array[$i];
 			}
@@ -305,7 +294,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	public function getDownloadPlatform() {
 		if (!$this->_download_platform) {
-			$platform_array = explode(",", icms::$module->config['downloads_platform']);
+			$config = $this->getDownloadsConfig();
+			$platform_array = explode(",", (string)($config['downloads_platform'] ?? ''));
 			foreach (array_keys($platform_array) as $i) {
 				$this->_download_platform[$platform_array[$i]] = $platform_array[$i];
 			}
@@ -321,7 +311,7 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	public function getRelated() {
 		if (!$this->_download_related) {
-			$this->_download_related = $this->getList(TRUE);
+			$this->_download_related = $this->getList();
 		}
 		return $this->_download_related;
 	}
@@ -372,11 +362,11 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	//update hit-counter
 	public function updateCounter($download_id) {
-		global $download_isAdmin;
+		global $downloads_isAdmin;
 		$downloadObj = $this->get($download_id);
 		if (!is_object($downloadObj)) return FALSE;
 
-		if (isset($downloadObj->vars['counter']) && !is_object(icms::$user) || (!$download_isAdmin && $downloadObj->getVar('download_publisher', 'e') != icms::$user->getVar("uid")) ) {
+		if (isset($downloadObj->vars['counter']) && !is_object(icms::$user) || (!$downloads_isAdmin && $downloadObj->getVar('download_publisher', 'e') != icms::$user->getVar("uid")) ) {
 			$new_counter = $downloadObj->getVar('counter') + 1;
 			$sql = 'UPDATE ' . $this->table . ' SET counter=' . $new_counter
 				. ' WHERE ' . $this->keyName . '=' . $downloadObj->id();
@@ -418,6 +408,17 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 	}
 
 	// some related functions for storing
+	protected function beforeSave(&$obj) {
+		// file and link fields are integer columns (file/link id), MySQL strict mode refuses an empty string
+		foreach (array('download_file', 'download_mirror_url', 'download_dev_hp', 'download_demo') as $field) {
+			$value = $obj->getVar($field, 'e');
+			if ($value === '' || $value === NULL) {
+				$obj->setVar($field, 0);
+			}
+		}
+		return TRUE;
+	}
+
 	protected function beforeInsert(&$obj) {
 		$mirror_url = $obj->getVar('download_mirror_url');
 		if(!$mirror_url == "") {
@@ -442,7 +443,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 		if (!$obj->getVar('download_notification_sent') && $obj->getVar('download_active', 'e') == TRUE && $obj->getVar('download_approve', 'e') == TRUE) {
 			$obj->sendDownloadNotification('new_file');
 			$obj->setVar('download_notification_sent', TRUE);
-			$this->insert($obj);
+			// object is still flagged as new in afterSave, so update the field directly instead of inserting again
+			$this->updateAll('download_notification_sent', 1, new icms_db_criteria_Item('download_id', $obj->id()), TRUE);
 		}
 		if (!$obj->isNew() && ($obj->getVar('download_active', 'e') == TRUE) && ($obj->getVar('download_approve', 'e') == TRUE) && ($obj->getVar('download_notification_sent') == 1)) {
 			$obj->sendDownloadNotification('file_modified');
@@ -452,9 +454,8 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 
 	protected function afterDelete(& $obj) {
 		$notification_handler = icms::handler( 'icms_data_notification' );
-		$module_handler = icms::handler('icms_module');
-		$module = $module_handler->getByDirname( icms::$module -> getVar( 'dirname' ) );
-		$module_id = icms::$module->getVar('mid');
+		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__DIR__)));
+		$module_id = $module->getVar('mid');
 		$category = 'global';
 		$download_id = $obj->id();
 		// delete global notifications
@@ -469,7 +470,7 @@ class DownloadsDownloadHandler extends icms_ipf_Handler {
 		$logObj = $downloads_log_handler->create();
 		$logObj->setVar('log_item_id', $obj->id() );
 		$logObj->setVar('log_date', (time()-200) );
-		$logObj->setVar('download_publisher', $log_uid);
+		$logObj->setVar('log_uid', $log_uid);
 		$logObj->setVar('log_item', 0 );
 		$logObj->setVar('log_case', 2	 );
 		$logObj->setVar('log_ip', xoops_getenv('REMOTE_ADDR') );

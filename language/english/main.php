@@ -55,6 +55,7 @@ define("_MD_DOWNLOADS_SURE_BROKEN", "Are you sure, the download link is broken?"
 define("_MD_DOWNLOADS_REPORT_BROKEN", "Report Broken Link");
 define("_MD_DOWNLOADS_FILE_UPDATED", "Updated");
 define("_MD_DOWNLOADS_FILE_NEW", "New");
+define("_MD_DOWNLOADS_FILE_POPULAR", "Popular");
 define("_MD_DOWNLOADS_DOWNLOAD_INPROGRESS", "Download in progress...");
 define("_MD_DOWNLOADS_DOWNLOAD_START_IN", "Your download should start in 3 seconds...<b>please wait</b>.");
 define("_MD_DOWNLOADS_DOWNLOAD_START_NOT", "If your download does not start, ");

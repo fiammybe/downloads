@@ -20,8 +20,6 @@
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
 function b_downloads_recent_updated_show($options) {
-	global $downloadsConfig;
-	
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
 	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');

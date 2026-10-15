@@ -25,10 +25,34 @@ function downloads_adminmenu( $currentoption = 0, $header = '', $menu = '', $ext
 	echo '<h3 style="color: #2F5376;">' . $header . '</h3>';
 }
 
+/**
+ * Get the configuration of the downloads module, independent of the module that is currently active
+ *
+ * @param string $key config name, or NULL for the complete config array
+ * @param mixed $default value returned when the config is not available
+ * @return mixed
+ */
+function downloads_getConfig($key = NULL, $default = NULL) {
+	static $config = NULL;
+	if ($config === NULL) {
+		$dirname = basename(dirname(__DIR__));
+		if (is_object(icms::$module) && icms::$module->getVar('dirname') == $dirname && is_array(icms::$module->config)) {
+			$config = icms::$module->config;
+		} else {
+			// icms_getModuleConfig() relies on the global $icmsModuleConfig, which is no longer set in ImpressCMS 2
+			$module = icms::handler('icms_module')->getByDirname($dirname);
+			$config = is_object($module) ? icms::handler('icms_config')->getConfigsByCat(0, $module->getVar('mid')) : array();
+		}
+		if (!is_array($config)) $config = array();
+	}
+	if ($key === NULL) return $config;
+	return $config[$key] ?? $default;
+}
+
 function downloads_display_new($time) {
-	global $downloadsConfig;
-	$new = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysnew'] ) ) );
-	if ( icms::$module->config['downloads_daysnew'] !== 0) {
+	$daysnew = (int)downloads_getConfig('downloads_daysnew', 0);
+	$new = ( time() - ( 86400 * $daysnew ) );
+	if ( $daysnew !== 0) {
 		if ( $new > $time ) {
 			$new = DOWNLOADS_IMAGES_URL . 'new.png';
 			
@@ -42,9 +66,9 @@ function downloads_display_new($time) {
 }
 
 function downloads_display_updated($time) {
-	global $downloadsConfig;
-	$updated = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysupdated'] ) ) );
-	if ( icms::$module->config['downloads_daysupdated'] !== 0) {
+	$daysupdated = (int)downloads_getConfig('downloads_daysupdated', 0);
+	$updated = ( time() - ( 86400 * $daysupdated ) );
+	if ( $daysupdated !== 0) {
 		if ( $updated > $time ) {
 			$updated = DOWNLOADS_IMAGES_URL . 'updated.png';
 			
@@ -58,8 +82,7 @@ function downloads_display_updated($time) {
 }
 
 function downloads_display_popular($counter) {
-	global $downloadsConfig;
-	$popular = icms::$module->config['downloads_popular'];
+	$popular = (int)downloads_getConfig('downloads_popular', 0);
 	if ( $popular !== 0) {
 		if ( $popular < $counter ) {
 			$popular = DOWNLOADS_IMAGES_URL . 'popular.png';

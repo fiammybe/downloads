@@ -19,6 +19,8 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsLogHandler extends icms_ipf_Handler {
 	/**
 	 * constructor
@@ -28,7 +30,7 @@ class DownloadsLogHandler extends icms_ipf_Handler {
 	}
 
 	public function clearLogDB($value='') {
-		$time = ( time() - ( 86400 * (int)( icms::$module->config['downloads_daysnew'] ) ) );
+		$time = ( time() - ( 86400 * (int)downloads_getConfig('downloads_daysnew', 0) ) );
 
 	}
 

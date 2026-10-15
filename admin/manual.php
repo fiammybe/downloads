@@ -25,7 +25,7 @@ $dirname = icms::$module -> getVar( 'dirname' );
 
 icms_cp_header();
 icms::$module->displayAdminMenu( 0, _MI_DOWNLOADS_MENU_MANUAL);
-$file = isset($_GET['file']) ? filter_input(INPUT_GET, "file", FILTER_SANITIZE_SPECIAL_CHARS) : "manual.html";
+$file = isset($_GET['file']) ? basename((string)filter_input(INPUT_GET, "file", FILTER_SANITIZE_SPECIAL_CHARS)) : "manual.html";
 $lang = "language/" . $icmsConfig['language'];
 $manual = DOWNLOADS_ROOT_PATH . "$lang/$file";
 if (!file_exists($manual)) {

@@ -23,7 +23,7 @@ $moddir = icms::$module -> getVar( 'dirname' );
 
 include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
 
-if (!defined('DOWNLOADS_ADMIN_URL')) define('DOWNLOADS_ADMIN_URL', DOWNLOAD_URL . 'admin/');
+if (!defined('DOWNLOADS_ADMIN_URL')) define('DOWNLOADS_ADMIN_URL', DOWNLOADS_URL . 'admin/');
 include_once DOWNLOADS_ROOT_PATH . 'include/requirements.php';
 
 global $icmsConfig;

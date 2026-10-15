@@ -442,7 +442,7 @@
 	    vertical-align: middle;
 	}
 	div.speech_bubble {margin-bottom:10px;}
-	div.speech_bubble div.bubble {margin-bottom:5px;padding:10px;line-height:14px;background-color:#B7E0FF;border:3px solid #FBFBFB; }
+	div.speech_bubble div.bubble {border-radius:10px;margin-bottom:5px;padding:10px;line-height:14px;background-color:#B7E0FF;border:3px solid #FBFBFB; }
 	div.speech_bubble p { margin:0;padding:15px 0 0 15px;position:relative;top:-8px;background:url(images/tip.gif) no-repeat 15px 0; }
 
 	.visitorvoice_title {
@@ -452,3 +452,6 @@
 		font-weight: bold;
 		background: #ccc;
 	}
+
+/* qTip2 tooltips */
+.downloads_qtip { text-align: left; }

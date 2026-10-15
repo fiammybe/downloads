@@ -255,6 +255,4 @@ define("_MI_DOWNLOADS_CATEGORY_EDIT", "Edit your Category");
 define("_MI_DOWNLOADS_CATEGORY_CREATINGNEW", "Create a new Category");
 /**
  * added in 1.1
- */
-// ACP memu
-define("_MI_DOWNLOADS_MENU_IMPORT", "Import");
+ */

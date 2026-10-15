@@ -18,7 +18,7 @@
  */
 
 function addreview($clean_review_id = 0, $clean_download_id = 0){
-	global $downloads_review_handler, $downloadsConfig, $icmsTpl;
+	global $downloads_review_handler, $icmsTpl;
 	$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__FILE__)), "downloads");
 	$downloadObj = $downloads_download_handler->get($clean_download_id);
 	$downloads_review_handler = icms_getModuleHandler("review", basename(dirname(__FILE__)), "downloads");
@@ -41,11 +41,11 @@ function addreview($clean_review_id = 0, $clean_download_id = 0){
 }
 
 function addtags($clean_tag_id = 0, $clean_download_id = 0){
-	global $sprockets_tag_handler, $downloadsConfig, $icmsTpl;
+	global $sprockets_tag_handler, $icmsTpl;
 	$downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__FILE__)), "downloads");
 	$downloadObj = $downloads_download_handler->get($clean_download_id);
 	$sprocketsModule = icms::handler('icms_module')->getByDirname("sprockets");
-	if(icms_get_module_status("sprockets")) {
+	if(is_object($sprocketsModule) && icms_get_module_status("sprockets")) {
 		$sprockets_tag_handler = icms_getModuleHandler("tag", $sprocketsModule->getVar("dirname"), "sprockets");
 		$tagObj = $sprockets_tag_handler->get($clean_tag_id);
 		$tagObj->hideFieldFromForm(array("label_type", "parent_id", "navigation_element", "rss", "short_url", "meta_description", "meta_keywords"));
@@ -72,7 +72,7 @@ include_once ICMS_ROOT_PATH . "/header.php";
 
 $downloads_indexpage_handler = icms_getModuleHandler("indexpage", DOWNLOADS_DIRNAME, "downloads");
 $indexpageObj = $downloads_indexpage_handler->get(1);
-$index = $indexpageObj->toArray();
+$index = is_object($indexpageObj) ? $indexpageObj->toArray() : array();
 $icmsTpl->assign('downloads_index', $index);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 				/**
 				 * mirror yes/no?
 				 */
-				if(icms::$module->config['use_mirror'] == 1 && !$downloadObj->getVar("download_mirror_url", "e") == 0 ) {
+				if(icms::$module->config['use_mirror'] == 1 && !empty($downloadObj->getVar("download_mirror_url", "e")) ) {
 					$icmsTpl->assign('show_mirror', TRUE);
 					$icmsTpl->assign('down_mirror_link', DOWNLOADS_URL . 'ajax.php?op=getFileMirror&download_id=' . $downloadObj->getVar("download_id") );
 				} else {
@@ -158,7 +158,7 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 				 * display disclaimer yes/no?
 				 */
 				if(icms::$module->config['downloads_show_down_disclaimer'] == 1) {
-					$discl = str_replace('{X_SITENAME}', $icmsConfig['sitename'], icms::$module->config['downloads_down_disclaimer']);
+					$discl = str_replace('{X_SITENAME}', $icmsConfig['sitename'], (string)icms::$module->config['downloads_down_disclaimer']);
 					$icmsTpl->assign('show_down_disclaimer', TRUE );
 					$icmsTpl->assign('down_disclaimer', $discl);
 				} else {
@@ -170,12 +170,13 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 				$albumModule = icms_getModuleInfo('album');
 				if (icms::$module->config['use_album'] == 1 && icms_get_module_status("album")){
 					$album_id = $downloadObj-> getVar("download_album");
-					if($album_id > 0){
+					if($album_id > 0 && is_object($albumModule)){
 						$icmsTpl->assign('album_module', TRUE);
 						$directory_name = basename(dirname( __FILE__ ) );
 						$script_name = getenv("SCRIPT_NAME");
 						$document_root = str_replace('modules/' . $directory_name . '/singledownload.php', '', $script_name);
-						$albumConfig = icms_getModuleConfig ($albumModule->getVar('name') );
+						$albumConfig = icms_getModuleConfig($albumModule->getVar('dirname'));
+						if (!is_array($albumConfig)) $albumConfig = array();
 						$album_id = $downloadObj->getVar('download_album');
 						$album_images_handler = icms_getModuleHandler( 'images', $albumModule -> getVar( 'dirname' ), 'album' );
 						$criteria = new icms_db_criteria_Compo();
@@ -186,14 +187,14 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 						foreach ( $imagesObjects as $imagesObj ) {
 							$image = $imagesObj -> toArray();
 							$image['img_url'] = $document_root . 'uploads/' . $albumModule->getVar('dirname') . '/images/' . $imagesObj->getVar('img_url', 'e');
-							$image['show_images_per_row'] = $albumConfig['show_images_per_row'];
-							$image['thumbnail_width'] = $albumConfig['thumbnail_width'];
-							$image['thumbnail_height'] = $albumConfig['thumbnail_height'];
+							$image['show_images_per_row'] = $albumConfig['show_images_per_row'] ?? 1;
+							$image['thumbnail_width'] = $albumConfig['thumbnail_width'] ?? 0;
+							$image['thumbnail_height'] = $albumConfig['thumbnail_height'] ?? 0;
 							$album_images[] = $image;
 						}
-						$album_image_rows = array_chunk($album_images, $albumConfig['show_images_per_row']);
-						$album_row_margins = 'style="margin:' . $albumConfig['thumbnail_margin_top'] . 'px 0px ' . $albumConfig['thumbnail_margin_bottom'] . 'px 0px;"';
-						$album_image_margins = 'align="center" style="display:inline-block; margin: 0px ' . $albumConfig['thumbnail_margin_right'] . 'px 0px ' . $albumConfig['thumbnail_margin_left'] . 'px;"';
+						$album_image_rows = array_chunk($album_images, max(1, (int)($albumConfig['show_images_per_row'] ?? 1)));
+						$album_row_margins = 'style="margin:' . (int)($albumConfig['thumbnail_margin_top'] ?? 0) . 'px 0px ' . (int)($albumConfig['thumbnail_margin_bottom'] ?? 0) . 'px 0px;"';
+						$album_image_margins = 'align="center" style="display:inline-block; margin: 0px ' . (int)($albumConfig['thumbnail_margin_right'] ?? 0) . 'px 0px ' . (int)($albumConfig['thumbnail_margin_left'] ?? 0) . 'px;"';
 						$icmsTpl->assign('album_images', $album_images);
 						$icmsTpl->assign('album_image_rows', $album_image_rows);
 						$icmsTpl->assign('album_row_margins', $album_row_margins);
@@ -223,14 +224,15 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 				$catalogueModule = icms_getModuleInfo('catalogue');
 				if (icms::$module->config['use_catalogue'] == 1 && icms_get_module_status("catalogue")){
 					$item_id = $downloadObj->getVar('catalogue_item');
-					if (!$item_id == 0) {
+					if (!empty($item_id) && is_object($catalogueModule)) {
 						$icmsTpl->assign('catalogue_module', TRUE);
 						$catalogueConfig = icms_getModuleConfig ($catalogueModule->getVar('dirname') );
 						$catalogue_item_handler = icms_getModuleHandler ('item', $catalogueModule->getVar('dirname'), 'catalogue');
 						$catalogueObj = $catalogue_item_handler->get($item_id);
+						if (!is_array($catalogueConfig)) $catalogueConfig = array();
 						$item_price = $catalogueObj->getVar('price');
-						$base_currency = $catalogueConfig['base_currency'];
-						if($catalogueConfig['show_prices'] == 1) {
+						$base_currency = $catalogueConfig['base_currency'] ?? '';
+						if(($catalogueConfig['show_prices'] ?? 0) == 1) {
 							$icmsTpl->assign('show_price', TRUE);
 							$icmsTpl->assign('base_currency', $base_currency);
 							$icmsTpl->assign('item_price', $item_price);
@@ -262,7 +264,7 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 				/**
 				 * include the comment rules
 				 */
-				if (icms::$module->config['com_rule']) {
+				if (!empty(icms::$module->config['com_rule'])) {
 					$icmsTpl->assign('downloads_download_comment', TRUE);
 					include_once ICMS_ROOT_PATH . '/include/comment_view.php';
 				}
@@ -328,5 +330,4 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 } else {
 	redirect_header (DOWNLOADS_URL, 3, _NO_PERM);
 }
-$xoTheme->addScript('/modules/' . DOWNLOADS_DIRNAME . '/scripts/jquery.curvycorners.packed.js', array('type' => 'text/javascript'));
 include_once "footer.php";

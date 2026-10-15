@@ -55,6 +55,7 @@ define("_MD_DOWNLOADS_SURE_BROKEN", "Sind Sie sicher, dass dieser Download defek
 define("_MD_DOWNLOADS_REPORT_BROKEN", "Defekten Link berichten");
 define("_MD_DOWNLOADS_FILE_UPDATED", "updated");
 define("_MD_DOWNLOADS_FILE_NEW", "Neu");
+define("_MD_DOWNLOADS_FILE_POPULAR", "Beliebt");
 define("_MD_DOWNLOADS_DOWNLOAD_INPROGRESS", "Download wird vorbereitet...");
 define("_MD_DOWNLOADS_DOWNLOAD_START_IN", "Ihr Download sollte in 3 Sekunden starten...<b>Bitte warten</b>.");
 define("_MD_DOWNLOADS_DOWNLOAD_START_NOT", "Sollte ihr Download nicht starten, ");

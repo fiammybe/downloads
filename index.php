@@ -29,7 +29,7 @@ include_once ICMS_ROOT_PATH . '/header.php';
 
 $downloads_indexpage_handler = icms_getModuleHandler( "indexpage", DOWNLOADS_DIRNAME, "downloads");
 $indexpageObj = $downloads_indexpage_handler->get(1);
-$index = $indexpageObj->toArray();
+$index = is_object($indexpageObj) ? $indexpageObj->toArray() : array();
 $icmsTpl->assign('downloads_index', $index);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,8 +51,7 @@ $downloads_download_handler = icms_getModuleHandler("download", DOWNLOADS_DIRNAM
 $valid_op = array ('getByTags', 'viewRecentDownloads', '');
 
 $clean_op = isset($_GET['op']) ? filter_input(INPUT_GET, 'op') : '';
-//icms::$module->config = icms_getModuleConfig('downloads');
-//global icms::$module->config;
+$extra_arg = FALSE;
 if(in_array($clean_op, $valid_op)) {
 	switch ($clean_op) {
 		case 'getByTags':
@@ -72,11 +71,11 @@ if(in_array($clean_op, $valid_op)) {
 			break;
 
 		case 'viewRecentDownloads':
-			$downloads = $downloads_download_handler->getDownloads($clean_files_start, icms::$module->config['show_downloads'], FALSE, FALSE, FALSE,  $clean_category_id, 'downloads_published_date', 'DESC');
+			$downloads = $downloads_download_handler->getDownloads($clean_files_start, icms::$module->config['show_downloads'], FALSE, FALSE, FALSE,  $clean_category_id, 'download_published_date', 'DESC');
 			$icmsTpl->assign('downloads', $downloads);
 			$icmsTpl->assign("byRecentDownloads", TRUE);
 			$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
-			$count = $downloads_download_handler->getCountCriteria(TRUE, TRUE, $groups,'download_grpperm',FALSE,FALSE, $clean_category_id, 'downloads_published_date', 'DESC');
+			$count = $downloads_download_handler->getCountCriteria(TRUE, TRUE, $groups,'download_grpperm',FALSE,FALSE, $clean_category_id);
 			if (!empty($clean_category_id)) {
 				$extra_arg = 'op=viewRecentDownloads&category_id=' . $clean_category_id;
 			} else {
@@ -124,13 +123,13 @@ if(in_array($clean_op, $valid_op)) {
 					$icmsTpl->assign('user_submit', FALSE);
 				}
 				$categories = $downloads_category_handler->getDownloadCategories($clean_category_start, icms::$module->config['show_categories'], $clean_category_uid,  FALSE, $clean_category_id, "weight", "ASC", TRUE, TRUE);
-				$downloads_category_columns = array_chunk($categories, icms::$module->config['show_category_columns']);
+				$downloads_category_columns = array_chunk($categories, max(1, (int)icms::$module->config['show_category_columns']));
 				$icmsTpl->assign('sub_category_columns', $downloads_category_columns);
 				/**
 				 * pagination for categories
 				 */
 				$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
-				$category_count = $downloads_category_handler->getCategoriesCount(TRUE, TRUE, $groups,'category_grpperm',FALSE,FALSE, $clean_category_id);
+				$category_count = $downloads_category_handler->getCategoriesCount($groups, 'category_grpperm', FALSE, FALSE, $clean_category_id, TRUE, TRUE);
 				if ((!$clean_category_id == 0) && ($clean_files_start == 0)) {
 					$extra_arg = 'category_id=' . $clean_category_id;
 				} elseif((!$clean_category_id == 0) && (!$clean_files_start == 0)) {
@@ -162,7 +161,7 @@ if(in_array($clean_op, $valid_op)) {
 				 * pagination
 				 */
 				$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
-				$category_count = $downloads_category_handler->getCategoriesCount(TRUE, TRUE, $groups,'category_grpperm',FALSE,FALSE, $clean_category_id);
+				$category_count = $downloads_category_handler->getCategoriesCount($groups, 'category_grpperm', FALSE, FALSE, $clean_category_id, TRUE, TRUE);
 				$category_pagenav = new icms_view_PageNav($category_count, icms::$module->config['show_categories'], $clean_category_start, 'cat_nav', FALSE);
 				$icmsTpl->assign('category_pagenav', $category_pagenav->renderNav());
 			/**
@@ -177,7 +176,7 @@ if(in_array($clean_op, $valid_op)) {
 			 */
 
 			if(icms::$module->config['downloads_show_upl_disclaimer'] == 1) {
-				$discl = str_replace('{X_SITENAME}', icms::$config->getConfig('sitename'), icms::$module->config['downloads_upl_disclaimer']);
+				$discl = str_replace('{X_SITENAME}', $icmsConfig['sitename'], (string)icms::$module->config['downloads_upl_disclaimer']);
 				$icmsTpl->assign('downloads_upl_disclaimer', TRUE );
 				$icmsTpl->assign('up_disclaimer', $discl);
 			} else {

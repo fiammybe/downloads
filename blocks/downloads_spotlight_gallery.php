@@ -20,13 +20,12 @@
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
 function b_downloads_spotlight_image_show($options) {
-	global $downloadsConfig, $xoTheme;
+	global $xoTheme;
 	
 	$moddir = basename(dirname(dirname(__FILE__)));
 	include_once ICMS_ROOT_PATH . '/modules/' . $moddir . '/include/common.php';
 	$downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 	
-	$downloadsConfig = icms_getModuleConfig(basename(dirname(dirname(__FILE__))));
 	$downloads = $downloads_download_handler->getDownloadsForBlocks(0, $options[0], FALSE, FALSE, $options[5], $options[6], $options[1], TRUE);
 	$block['view_all'] = DOWNLOADS_URL . 'index.php?op=viewRecentDownloads&category_id=' . $options[1];
 	$block['show_view_all'] = $options[3];
@@ -34,7 +33,9 @@ function b_downloads_spotlight_image_show($options) {
 	$block['display_width'] = $options[4];
 	$block['downloads_gallery'] = $downloads;
 
-	$xoTheme->addStylesheet('/modules/' . DOWNLOADS_DIRNAME . '/module_downloads_blocks.css');
+	if (is_object($xoTheme)) {
+		$xoTheme->addStylesheet('/modules/' . DOWNLOADS_DIRNAME . '/module_downloads_blocks.css');
+	}
 	
 	return $block;
 }

@@ -19,11 +19,9 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsIndexpageHandler extends icms_ipf_Handler {
-	
-	public $_moduleName;
-	
-	public $_uploadPath;
 
 	/**
 	 * Constructor

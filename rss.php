@@ -21,16 +21,16 @@ include_once 'header.php';
 
 include_once ICMS_ROOT_PATH . '/header.php';
 
-$clean_post_uid = isset($_GET['uid']) ? filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT) : FALSE;
+$clean_post_uid = isset($_GET['uid']) ? (int)filter_input(INPUT_GET, 'uid', FILTER_SANITIZE_NUMBER_INT) : FALSE;
 
 $downloads_feed = new icms_feeds_Rss();
 
-$downloads_feed->title = $icmsConfig['sitename'] . ' - ' . $icmsModule->name();
+$downloads_feed->title = $icmsConfig['sitename'] . ' - ' . icms::$module->getVar('name');
 $downloads_feed->url = ICMS_URL;
 $downloads_feed->description = $icmsConfig['slogan'];
 $downloads_feed->language = _LANGCODE;
 $downloads_feed->charset = _CHARSET;
-$downloads_feed->category = $icmsModule->name();
+$downloads_feed->category = icms::$module->getVar('name');
 
 $downloads_download_handler = icms_getModuleHandler("download", basename(dirname(__FILE__)), "downloads");
 $postsArray = $downloads_download_handler->getDownloads(0, 10, FALSE, $clean_post_uid, FALSE, FALSE, 'download_published_date', 'DESC');
@@ -42,7 +42,7 @@ foreach($postsArray as $postArray) {
 	  'link' => str_replace('&', '&amp;', $postArray['itemURL']),
 	  'author' => $postArray['publisher'],
 	  'description' => icms_core_DataFilter::htmlSpecialChars(str_replace('&', '&amp;', $postArray['teaser']), ENT_QUOTES, _CHARSET),
-	  'pubdate' => $postArray['download_published_date'],
+	  'pubdate' => formatTimestamp($postArray['published_timestamp'], 'rss'),
 	  'guid' => str_replace('&', '&amp;', $postArray['itemURL']),
 	  'category' => $postArray['cats'],
 	  

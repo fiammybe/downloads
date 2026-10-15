@@ -1,5 +1,31 @@
 = *Downloads* Changelog =
 
+== Version 1.3 beta => Release Date: 15.10.2026 ==
+
+* Compatible with PHP 8.2 and ImpressCMS 2.0.3
+* Module configuration is read from the downloads module itself, so blocks, search, notifications and the waiting plugin work outside the module
+* Dates are formatted with formatTimestamp (user timezone aware)
+* Fixed fatal error on single download view (accessGranted without parameter)
+* Fixed fatal errors and warnings with empty related files, tags, categories and album/catalogue configuration
+* Fixed category count on index page (wrong parameter order)
+* Fixed download permission name on permissions page
+* Fixed category menu block (permissions, links and default options)
+* Fixed RSS feed (module name and publication date)
+* Fixed log entry on file deletion (user id)
+* Fixed creating files with MySQL strict mode (empty file/link fields)
+* Fixed duplicate insert after saving a new file or category (notification flag)
+* Fixed module configuration not loaded on module pages (icms_getModuleConfig no longer works in ImpressCMS 2)
+* Fixed review form (case options) and voting/broken report redirects (icms_getPreviousPage removed)
+* Fixed permissions page when there are no files or categories yet
+* Fixed indexpage footer not displayed
+* Updated qTip2 to 3.0.3 for jQuery 3 compatibility
+* Removed curvycorners, rounded corners are done with CSS
+* Removed import script for WF-Downloads
+
+== Version 1.2 => Release Date: 12.02.2025 ==
+
+* Restarted development, compatible with ImpressCMS 2
+
 == Version 1.1 => Release Date: XX.03.2012 ==
 
 * Fixed error with sprockets

@@ -19,6 +19,8 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsReviewHandler extends icms_ipf_Handler {
 	/**
 	 * constructor
@@ -54,13 +56,14 @@ class DownloadsReviewHandler extends icms_ipf_Handler {
 		$obj->setVar("review_message", $smessage);
 
 		$email = $obj->getVar("review_email", "s");
-		if(icms::$module->config['display_reviews_email'] == 1) {
+		$display_email = (int)downloads_getConfig('display_reviews_email', 0);
+		if($display_email == 1) {
 			$email = icms_core_DataFilter::checkVar($email, 'email', 1, 0);
-		} elseif(icms::$module->config['display_reviews_email'] == 2) {
+		} elseif($display_email == 2) {
 			$email = icms_core_DataFilter::checkVar($email, 'email', 0, 0);
-		} elseif(icms::$module->config['display_reviews_email'] == 3) {
+		} elseif($display_email == 3) {
 			$email = icms_core_DataFilter::checkVar($email, 'email', 1, 1);
-		} elseif(icms::$module->config['display_reviews_email'] == 4) {
+		} elseif($display_email == 4) {
 			$email = icms_core_DataFilter::checkVar($email, 'email', 0, 1);
 		}
 		$obj->setVar("review_email", $email);
