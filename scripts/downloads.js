@@ -59,24 +59,11 @@
 	/**
 	 * E N D jquery cookie plugin
 	 */
-	function SetSpeechBubble()
-	{
-		$(function()
-		{
-			settings=
-			{
-				tl:{ radius:10 },
-				tr:{ radius:10 },
-				bl:{ radius:10 },
-				br:{ radius:10 },
-				antiAlias:true,
-				autoPad:true,
-				validTags:["div"]
-			}
-			
-			$('div.bubble').corner(settings);
-		});
-	}
+	/**
+	 * rounded speech bubbles are now done with CSS border-radius (curvycorners removed),
+	 * function kept for backwards compatibility with customised templates
+	 */
+	function SetSpeechBubble() {}
 	
 	
 	//report broken Link
@@ -259,19 +246,18 @@
 					title: $(this).attr('original-title')
 				},
 				style: {
-					width:500,
-					viewport: $(window), // Keep it on-screen at all times if possible
-					textAlign:'left',
-					tip:'bottomLeft',
-					classes: 'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow',
+					width: 500,
+					tip: { corner: 'bottom left' },
+					classes: 'qtip-light qtip-rounded qtip-shadow downloads_qtip'
 				},
-				position:   {
+				position: {
 					target: 'mouse',
-					my:'bottomLeft',
+					my: 'bottom left',
+					viewport: $(window), // Keep it on-screen at all times if possible
 					adjust: {
-						x: 0,  y: -5
+						x: 0, y: -5
 					}
-				},
+				}
 			});
 		});
 		// initiate qtips for tags
@@ -282,19 +268,18 @@
 					title: $(this).attr('original-title')
 				},
 				style: {
-					width:500,
-					viewport: $(window), // Keep it on-screen at all times if possible
-					textAlign:'left',
-					tip:'bottomLeft',
-					classes: 'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow',
+					width: 500,
+					tip: { corner: 'bottom left' },
+					classes: 'qtip-light qtip-rounded qtip-shadow downloads_qtip'
 				},
-				position:   {
+				position: {
 					target: 'mouse',
-					my:'bottomLeft',
+					my: 'bottom left',
+					viewport: $(window), // Keep it on-screen at all times if possible
 					adjust: {
-						x: 0,  y: -5
+						x: 0, y: -5
 					}
-				},
+				}
 			});
 		});
 		
