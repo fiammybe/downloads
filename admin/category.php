@@ -135,10 +135,11 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 			break;
 			
 		case "changeWeight":
-			foreach ($_POST['DownloadsCategory_objects'] as $key => $value) {
+			$objects = isset($_POST['DownloadsCategory_objects']) ? (array)$_POST['DownloadsCategory_objects'] : array();
+			foreach ($objects as $key => $value) {
 				$changed = FALSE;
-				$categoryObj = $downloads_category_handler -> get( $value );
-
+				$categoryObj = $downloads_category_handler -> get( (int)$value );
+				if (!isset($_POST['weight'][$key]) || !is_object($categoryObj) || $categoryObj->isNew()) continue;
 				if ($categoryObj->getVar('weight', 'e') != $_POST['weight'][$key]) {
 					$categoryObj->setVar('weight', (int)($_POST['weight'][$key]));
 					$changed = TRUE;

@@ -19,15 +19,11 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 icms_loadLanguageFile('downloads', 'common');
 
 class DownloadsCategoryHandler extends icms_ipf_Handler {
-
-	public $_moduleName;
-
-	public $_uploadPath;
-
-	public $identifierName;
 
 	public function __construct($db) {
 		parent::__construct($db, 'category', 'category_id', 'category_title', 'category_description', 'downloads');
@@ -35,6 +31,15 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		$this->addPermission('category_uplperm', _CO_DOWNLOADS_CATEGORY_CATEGORY_UPLPERM, _CO_DOWNLOADS_CATEGORY_CATEGORY_UPLPERM_DSC);
 		$mimetypes = array('image/jpeg', 'image/png', 'image/gif');
 		$this->enableUpload($mimetypes, 2000000, 500, 500);
+	}
+
+	/**
+	 * Get the configuration of this module, also when called from outside the module (blocks, search, ...)
+	 *
+	 * @return array
+	 */
+	public function getDownloadsConfig() {
+		return downloads_getConfig();
 	}
 
 	// some criterias used by other requests
@@ -83,7 +88,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		if (is_null($category_id)) $category_id = 0;
 		$criteria->add(new icms_db_criteria_Item('category_pid', $category_id));
 		$this->setGrantedObjectsCriteria($criteria, "category_grpperm");
-		$categories = & $this->getObjects($criteria, TRUE);
+		$categories = $this->getObjects($criteria, TRUE);
 		$ret = array();
 		if ($showNull) {
 			$ret[0] = '-----------------------';
@@ -162,7 +167,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 
 	static public function getImageList() {
 		$categoryimages = array();
-		$categoryimages = icms_core_Filesystem::getFileList(ICMS_ROOT_PATH . '/uploads/' . icms::$module -> getVar( 'dirname' ) . '/category/', '', array('gif', 'jpg', 'png'));
+		$categoryimages = icms_core_Filesystem::getFileList(ICMS_ROOT_PATH . '/uploads/' . basename(dirname(__DIR__)) . '/category/', '', array('gif', 'jpg', 'png'));
 		$ret = array();
 		$ret[0] = '-----------------------';
 		foreach(array_keys($categoryimages) as $i ) {
@@ -181,7 +186,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 			$criteria->add(new icms_db_criteria_Item('category_approve', TRUE));
 		}
 		if($category_id) $criteria->add(new icms_db_criteria_Item('category_id', $category_id));
-		if (is_null($category_pid)) $category_pid == 0;
+		if (is_null($category_pid)) $category_pid = 0;
 		$criteria->add(new icms_db_criteria_Item('category_pid', $category_pid));
 		$this->setGrantedObjectsCriteria($criteria, "category_grpperm");
 		return $this->getCount($criteria);
@@ -192,8 +197,9 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		if (!is_object(icms::$user)) return FALSE;
 		if ($downloads_isAdmin) return TRUE;
 		$user_groups = icms::$user->getGroups();
-		$module = icms::handler("icms_module")->getByDirname(basename(dirname(__DIR__)), TRUE);
-		return count(array_intersect_key($module->config['downloads_allowed_groups'], $user_groups)) > 0;
+		$config = $this->getDownloadsConfig();
+		$allowed_groups = (array)($config['downloads_allowed_groups'] ?? array());
+		return count(array_intersect($allowed_groups, $user_groups)) > 0;
 	}
 
 	// get breadcrumb
@@ -212,7 +218,7 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 					}
 					if ($category->getVar('category_pid', 'e') == 0) {
 						if (!$userside){
-							return "<a href='" . DOWNLOADS_URL . "index.php?category_id=" . $category->getVar('category_id', 'e') . "'>" . _MI_DOWNLOADS_CATEGORY . "</a> &nbsp;:&nbsp; " . $ret;
+							return "<a href='" . DOWNLOADS_URL . "index.php?category_id=" . $category->getVar('category_id', 'e') . "'>" . (defined('_AM_DOWNLOADS_CATEGORIES') ? trim(str_replace('&nbsp;', '', _AM_DOWNLOADS_CATEGORIES)) : 'Categories') . "</a> &nbsp;:&nbsp; " . $ret;
 						} else {
 							return $ret;
 						}
@@ -262,7 +268,8 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 		if (!$obj->getVar('category_notification_sent') && $obj->getVar('category_active', 'e') == TRUE && $obj->getVar('category_approve', 'e') == TRUE) {
 			$obj->sendCategoryNotification('new_category');
 			$obj->setVar('category_notification_sent', TRUE);
-			$this->insert($obj);
+			// object is still flagged as new in afterSave, so update the field directly instead of inserting again
+			$this->updateAll('category_notification_sent', 1, new icms_db_criteria_Item('category_id', $obj->id()), TRUE);
 		}
 		if(!$obj->isNew() && ($obj->getVar('category_notification_sent') == 1) && ($obj->getVar('category_active', 'e') == TRUE) && ($obj->getVar('category_approve', 'e') == TRUE)) {
 			$obj->sendCategoryNotification('category_modified');
@@ -272,9 +279,8 @@ class DownloadsCategoryHandler extends icms_ipf_Handler {
 
 	protected function afterDelete(& $obj) {
 		$notification_handler = icms::handler( 'icms_data_notification' );
-		$module_handler = icms::handler('icms_module');
-		$module = $module_handler->getByDirname( icms::$module -> getVar( 'dirname' ) );
-		$module_id = icms::$module->getVar('mid');
+		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__DIR__)));
+		$module_id = $module->getVar('mid');
 		$category = 'global';
 		$category_id = $obj->id();
 		// delete global notifications

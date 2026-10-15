@@ -19,13 +19,15 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 /**
  * Class for download log
  */
 class DownloadsLog extends icms_ipf_Object {
 
 	function __construct(&$handler) {
-		icms_ipf_object::__construct($handler);
+		parent::__construct($handler);
 
 		$this->quickInitVar('log_id', XOBJ_DTYPE_INT, TRUE);
 		$this->quickInitVar('log_ip', XOBJ_DTYPE_OTHER);
@@ -48,7 +50,7 @@ class DownloadsLog extends icms_ipf_Object {
 		$date = '';
 		$date = $this->getVar('log_date', 'e');
 
-		return date(icms::$module->config['downloads_dateformat'], $date);
+		return formatTimestamp($date, downloads_getConfig('downloads_dateformat', 's'));
 	}
 
 	public function getLogItemId() {

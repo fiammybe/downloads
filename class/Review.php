@@ -19,6 +19,8 @@
 
 defined("ICMS_ROOT_PATH") or die("ICMS root path not defined");
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsReview extends icms_ipf_Object {
 
 	public function __construct(&$handler) {
@@ -35,7 +37,8 @@ class DownloadsReview extends icms_ipf_Object {
 		$this->quickInitVar("review_date",XOBJ_DTYPE_LTIME);
 		$this->initCommonVar('dohtml', FALSE, 1);
 
-		$this->setControl("review_case", array("name" => "radio", "itemHandler" => "review", "method" => "getCase", "module" => "downloads"));
+		// pass the options directly: the core radio element can't call itemHandler methods on PHP 7+
+		$this->setControl("review_case", array("name" => "radio", "options" => $this->handler->getCase()));
 
 		$this->hideFieldFromForm(array("review_item_id", "review_uid", "review_ip", "review_date" ));
 
@@ -61,7 +64,7 @@ class DownloadsReview extends icms_ipf_Object {
 		$date = '';
 		$date = $this->getVar('review_date', 'e');
 
-		return date(icms::$module->config['downloads_dateformat'], $date);
+		return formatTimestamp($date, downloads_getConfig('downloads_dateformat', 's'));
 	}
 
 	public function getReviewAvatar() {

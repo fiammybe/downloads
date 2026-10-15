@@ -83,10 +83,10 @@ if (in_array($clean_op, $valid_op, TRUE)){
 			// create downloads table
 			$objectTable = new icms_ipf_view_Table($downloads_review_handler, $criteria);
 			$objectTable->addColumn( new icms_ipf_view_Column( 'review_item_id', 'center', 50, 'getReviewItem' ) );
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_name', FALSE, FALSE, 'getReviewName' ) );
+			$objectTable->addColumn( new icms_ipf_view_Column( 'review_name' ) );
 			$objectTable->addColumn( new icms_ipf_view_Column( 'review_email') );
 			$objectTable->addColumn( new icms_ipf_view_Column( 'review_message',FALSE, FALSE, 'getReviewMessage'));
-			$objectTable->addColumn( new icms_ipf_view_Column( 'review_date', 'center', 50, 'getReviewDate' ) );			
+			$objectTable->addColumn( new icms_ipf_view_Column( 'review_date', 'center', 50, 'getReviewPublishedDate' ) );			
 			$icmsAdminTpl->assign( 'downloads_review_table', $objectTable->fetch() );
 			$icmsAdminTpl->display( 'db:downloads_admin.html' );
 			break;

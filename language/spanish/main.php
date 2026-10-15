@@ -56,6 +56,7 @@ define("_MD_DOWNLOADS_SURE_BROKEN", "¿Está seguro de que existe un error en la
 define("_MD_DOWNLOADS_REPORT_BROKEN", "Reportar fallo");
 define("_MD_DOWNLOADS_FILE_UPDATED", "Actualizado");
 define("_MD_DOWNLOADS_FILE_NEW", "Nuevo");
+define("_MD_DOWNLOADS_FILE_POPULAR", "Popular");
 define("_MD_DOWNLOADS_DOWNLOAD_INPROGRESS", "Descarga realizándose...");
 define("_MD_DOWNLOADS_DOWNLOAD_START_IN", "Su descarga comenzará en tres segundos.<b>Espere, por favor</b>.");
 define("_MD_DOWNLOADS_DOWNLOAD_START_NOT", "Si no comenzase, ");

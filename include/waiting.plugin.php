@@ -36,7 +36,7 @@ function b_waiting_downloads() {
 	$result = $downloads_category_handler->getCount($approved);
 	if ($result > 0) {
 		$block['adminlink'] = ICMS_URL."/modules/downloads/admin/category.php";
-		list($block['pendingnum']) = $result;
+		$block['pendingnum'] = $result;
 		$block['lang_linkname'] = _MOD_DOWNLOADS_CATEGORY_APPROVE ;
 		$ret[] = $block;
 	}
@@ -48,7 +48,7 @@ function b_waiting_downloads() {
 	$result = $downloads_download_handler->getCount($approve);
 	if ($result > 0) {
 		$block['adminlink'] = ICMS_URL."/modules/downloads/admin/download.php";
-		list($block['pendingnum']) = $result;
+		$block['pendingnum'] = $result;
 		$block['lang_linkname'] = _MOD_DOWNLOADS_DOWNLOAD_APPROVE;
 		$ret[] = $block;
 	}
@@ -61,7 +61,7 @@ function b_waiting_downloads() {
 	$result = $downloads_download_handler->getCount($approve);
 	if ($result > 0) {
 		$block['adminlink'] = ICMS_URL."/modules/downloads/admin/download.php";
-		list($block['pendingnum']) = $result;
+		$block['pendingnum'] = $result;
 		$block['lang_linkname'] = _MOD_DOWNLOADS_MIRROR_APPROVE ;
 		$ret[] = $block;
 	}
@@ -74,7 +74,7 @@ function b_waiting_downloads() {
 	$result = $downloads_download_handler->getCount($broken);
 	if ($result) {
 		$block['adminlink'] = ICMS_URL."/modules/downloads/admin/download.php";
-		list($block['pendingnum']) = $result;
+		$block['pendingnum'] = $result;
 		$block['lang_linkname'] = _MOD_DOWNLOADS_BROKEN_FILES ;
 		$ret[] = $block;
 	}

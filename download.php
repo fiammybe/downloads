@@ -18,7 +18,7 @@
  */
  
 function editdownload($downloadObj) {
-	global $downloads_download_handler, $downloads_category_handler, $icmsTpl, $downloadsConfig;
+	global $downloads_download_handler, $downloads_category_handler, $icmsTpl;
 	
 	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__FILE__)), "downloads");
 	if (!is_object(icms::$user)) {

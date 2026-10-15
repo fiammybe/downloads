@@ -55,6 +55,7 @@ define("_MD_DOWNLOADS_SURE_BROKEN", "あなたは確信して、ダウンロー�
 define("_MD_DOWNLOADS_REPORT_BROKEN", "リンク切れ報告");
 define("_MD_DOWNLOADS_FILE_UPDATED", "更新した");
 define("_MD_DOWNLOADS_FILE_NEW", "新しい");
+define("_MD_DOWNLOADS_FILE_POPULAR", "人気");
 define("_MD_DOWNLOADS_DOWNLOAD_INPROGRESS", "進行中のダウンロード...");
 define("_MD_DOWNLOADS_DOWNLOAD_START_IN", "あなたのダウンロードは3秒で起動します...<b>しばらくお待ちください</b>.");
 define("_MD_DOWNLOADS_DOWNLOAD_START_NOT", "あなたのダウンロードが開始しない場合は、");

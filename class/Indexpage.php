@@ -19,6 +19,8 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsIndexpage extends icms_ipf_seo_Object {
 	
 	public function __construct(&$handler) {

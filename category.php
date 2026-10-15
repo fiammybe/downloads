@@ -18,7 +18,7 @@
  */
 
 function editcategory($categoryObj = 0, $clean_category_pid = 0) {
-	global $downloads_category_handler, $icmsTpl, $downloadsConfig;
+	global $downloads_category_handler, $icmsTpl;
 	
 	$downloads_log_handler = icms_getModuleHandler("log", basename(dirname(__FILE__)), "downloads");
 	if (!is_object(icms::$user)) {
@@ -154,6 +154,6 @@ if(in_array($clean_op, $valid_op, TRUE)) {
 			break;
 	}
 } else {
-	redirect_header(icms_getPreviousPage(), 3, _NO_PERM);
+	redirect_header(icms::$urls['previouspage'], 3, _NO_PERM);
 }
 include_once 'footer.php';

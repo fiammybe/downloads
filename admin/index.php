@@ -23,8 +23,8 @@ $clean_op = $clean_download_id = $clean_category_id = $valid_op = $downloads_dow
 
 $valid_op = array ('mod', 'changedField', 'adddownload', 'del', 'view', 'visible', 'changeShow','changeApprove', 'changeWeight', '');
 
-if (isset($_GET['op'])) $clean_op = htmlentities($_GET['op']);
-if (isset($_POST['op'])) $clean_op = htmlentities($_POST['op']);
+if (isset($_GET['op'])) $clean_op = htmlentities((string)filter_input(INPUT_GET, 'op'));
+if (isset($_POST['op'])) $clean_op = htmlentities((string)filter_input(INPUT_POST, 'op'));
 
 $downloads_download_handler = icms_getModuleHandler('download', basename(dirname(__DIR__)), 'downloads');
 $downloads_category_handler = icms_getModuleHandler('category', basename(dirname(__DIR__)), 'downloads');
@@ -34,7 +34,7 @@ $clean_category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : 0
 
 icms_cp_header();
 downloads_adminmenu(0, _MI_DOWNLOADS_MENU_INDEX);
-global $downloadsConfig;
+$download_approve = $category_approve = 0;
 //check broken downloads
 $criteria = '';
 $criteria = new icms_db_criteria_Compo();
@@ -70,24 +70,6 @@ if (icms::$module->config['category_needs_approve'] == 1) {
 	$category_approve = $downloads_category_handler->getCount($criteria4, TRUE, FALSE);
 }
 
-function getMimeTypes() {
-	$mimetype_handler = icms_getModuleHandler('mimetype', 'system');
-	$criteria = "";
-	$criteria = new icms_db_criteria_Compo();
-	$mimetypeObjects = $mimetype_handler->getObjects($criteria, TRUE, FALSE);
-	$mimetype = '';
-	foreach (array_keys($mimetypeObjects) as $key => $mimetypeObj) {
-		if(in_array(icms::$module->getVar("dirname"), array($mimetypeObj['dirname'])))	{
-			$mimetype .= $mimetypeObj . ', ';
-		}
-	}
-	return $mimetype;
-	
-}
-
-$mimetypes = getMimeTypes();
-
-//$mimetypes = $downloads_download_handler->checkMimeType();
 echo ' <div style="margin: 2em 0em;"><p>' . _AM_DOWNLOADS_INDEX_WARNING . '</p></div>';
 $dir = ICMS_ROOT_PATH . '/modules/sitemap/plugins';
 if(is_dir($dir)) {

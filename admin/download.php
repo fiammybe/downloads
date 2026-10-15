@@ -18,7 +18,7 @@
  */
 
 function editdownload($download_id = 0) {
-	global $downloads_download_handler, $icmsAdminTpl, $downloadsConfig;
+	global $downloads_download_handler, $icmsAdminTpl;
 	
 	$downloadObj = $downloads_download_handler->get($download_id);
 	
@@ -143,7 +143,7 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 		case 'changeMirrorApprove':
 			$mirror_approve = $downloads_download_handler -> changeMirrorApprove( $clean_download_id );
 			$ret = 'download.php';
-			if ($show == 0) {
+			if ($mirror_approve == 0) {
 				redirect_header( DOWNLOADS_ADMIN_URL . $ret, 2, _AM_DOWNLOADS_MIRROR_FALSE );
 			} else {
 				redirect_header( DOWNLOADS_ADMIN_URL . $ret, 2, _AM_DOWNLOADS_MIRROR_TRUE );
@@ -162,10 +162,11 @@ if (in_array($clean_op, $valid_op, TRUE)) {
 			break;
 			
 		case "changeWeight":
-			foreach ($_POST['DownloadsDownload_objects'] as $key => $value) {
+			$objects = isset($_POST['DownloadsDownload_objects']) ? (array)$_POST['DownloadsDownload_objects'] : array();
+			foreach ($objects as $key => $value) {
 				$changed = FALSE;
-				$downloadObj = $downloads_download_handler -> get( $value );
-
+				$downloadObj = $downloads_download_handler -> get( (int)$value );
+				if (!isset($_POST['weight'][$key]) || !is_object($downloadObj) || $downloadObj->isNew()) continue;
 				if ($downloadObj->getVar('weight', 'e') != $_POST['weight'][$key]) {
 					$downloadObj->setVar('weight', (int)($_POST['weight'][$key]));
 					$changed = TRUE;

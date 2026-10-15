@@ -19,6 +19,8 @@
 
 defined('ICMS_ROOT_PATH') or die('ICMS root path not defined');
 
+include_once dirname(__DIR__) . '/include/functions.php';
+
 class DownloadsCategory extends icms_ipf_seo_Object {
 
 	public $updating_counter = FALSE;
@@ -27,7 +29,7 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 
 	public function __construct(&$handler) {
 
-		icms_ipf_object::__construct($handler);
+		parent::__construct($handler);
 
 		$this->quickInitVar('category_id', XOBJ_DTYPE_INT, TRUE);
 		$this->quickInitVar('category_title', XOBJ_DTYPE_TXTBOX, TRUE);
@@ -80,13 +82,16 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 	public function getCategoryPublishedDate() {
 
 		$date = $this->getVar('category_published_date', 'e');
-		return date(icms::$module->config['downloads_dateformat'], $date);
+		$config = $this->handler->getDownloadsConfig();
+		return formatTimestamp($date, $config['downloads_dateformat'] ?? 's');
 	}
 
 	public function getCategoryUpdatedDate() {
 
 		$date = $this->getVar('category_updated_date', 'e');
-		return date(icms::$module->config['downloads_dateformat'], $date);
+		if (empty($date)) return '';
+		$config = $this->handler->getDownloadsConfig();
+		return formatTimestamp($date, $config['downloads_dateformat'] ?? 's');
 	}
 
 	public function getCategoryImageTag() {
@@ -144,9 +149,10 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		}
 		$ret = $this->getVar('category_pid', 'e');
 		if ($ret > 0) {
-			$ret = '<a href="' . DOWNLOADS_URL . 'index.php?category_id=' . $ret . '">' . str_replace('-', '', $category_pidArray[$ret]) . '</a>';
+			$title = isset($category_pidArray[$ret]) ? str_replace('-', '', $category_pidArray[$ret]) : $ret;
+			$ret = '<a href="' . DOWNLOADS_URL . 'index.php?category_id=' . $ret . '">' . $title . '</a>';
 		} else {
-			$ret = $category_pidArray[$ret];
+			$ret = $category_pidArray[$ret] ?? '';
 		}
 		return $ret;
 	}
@@ -165,11 +171,11 @@ class DownloadsCategory extends icms_ipf_seo_Object {
 		return FALSE;
 	}
 
-	function accessGranted($perm_name = null) {
+	public function accessGranted($perm_name = 'category_grpperm') {
 		$gperm_handler = icms::handler('icms_member_groupperm');
 		$groups = is_object(icms::$user) ? icms::$user->getGroups() : array(ICMS_GROUP_ANONYMOUS);
 		$module = icms::handler('icms_module')->getByDirname(basename(dirname(__FILE__, 2)));
-		$viewperm = $gperm_handler->checkRight('category_grpperm', $this->getVar('category_id', 'e'), $groups, icms::$module->getVar("mid"));
+		$viewperm = $gperm_handler->checkRight($perm_name ?: 'category_grpperm', $this->getVar('category_id', 'e'), $groups, $module->getVar("mid"));
 		if (is_object(icms::$user) && icms::$user->getVar("uid") == $this->getVar('category_publisher', 'e')) {
 			return TRUE;
 		}

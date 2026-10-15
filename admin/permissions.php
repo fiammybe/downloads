@@ -24,11 +24,13 @@ include_once 'admin_header.php';
 icms_cp_header();
 
 icms::$module->displayAdminMenu(5, _MI_DOWNLOADS_MENU_PERMISSIONS);
-$op = isset($_REQUEST['op']) ? trim($_REQUEST['op']) : '';
+$op = isset($_REQUEST['op']) && is_string($_REQUEST['op']) ? trim($_REQUEST['op']) : '';
+$title_of_form = $perm_name = $restriction = '';
+$anonymous = TRUE;
 switch ($op) {
 	case 'viewdownloads':
 		$title_of_form = _AM_DOWNLOADS_PREMISSION_DOWNLOADS_VIEW;
-		$perm_name = "downloads_grpperm";
+		$perm_name = "download_grpperm";
 		$restriction = "";
 		$anonymous = TRUE;
 		break;
@@ -58,6 +60,7 @@ $op_select->addOption('submitdownloads', _AM_DOWNLOADS_PREMISSION_CATEGORY_SUBMI
 $opform->addElement($op_select);
 $opform->display();
 
+$has_items = FALSE;
 $form = new icms_form_Groupperm($title_of_form, icms::$module->getVar('mid'), $perm_name, '', 'admin/permissions.php', $anonymous);
 
 if($op == 'viewdownloads') {
@@ -66,36 +69,51 @@ if($op == 'viewdownloads') {
 	if($downloads) {
 		foreach (array_keys($downloads) as $i) {
 			if ($restriction == "") {
+				$has_items = TRUE;
 				$form->addItem($downloads[$i]->getVar('download_id'),
 				$downloads[$i]->getVar('download_title'));
 			}
 		}
 	}
-	$form->display();
+	if ($has_items) {
+		$form->display();
+	} else {
+		echo '<p>' . _AM_DOWNLOADS_NO_CAT_FOUND . '</p>';
+	}
 } elseif ($op == 'viewcategory') {
 	$downloads_category_handler = icms_getModuleHandler("category", DOWNLOADS_DIRNAME, "downloads");
 	$categories = $downloads_category_handler->getObjects(FALSE, TRUE);
 	if($categories) {
 		foreach (array_keys($categories) as $i) {
 			if ($restriction == "") {
+				$has_items = TRUE;
 				$form->addItem($categories[$i]->getVar('category_id'),
 				$categories[$i]->getVar('category_title'));
 			}
 		}
 	}
-	$form->display();
+	if ($has_items) {
+		$form->display();
+	} else {
+		echo '<p>' . _AM_DOWNLOADS_NO_CAT_FOUND . '</p>';
+	}
 } elseif($op == 'submitdownloads') {
 	$downloads_category_handler = icms_getModuleHandler("category", DOWNLOADS_DIRNAME, "downloads");
 	$categories = $downloads_category_handler->getObjects(FALSE, TRUE);
 	if($categories) {
 		foreach (array_keys($categories) as $i) {
 			if ($restriction == "") {
+				$has_items = TRUE;
 				$form->addItem($categories[$i]->getVar('category_id'),
 				$categories[$i]->getVar('category_title'));
 			}
 		}
 	}
-	$form->display();
+	if ($has_items) {
+		$form->display();
+	} else {
+		echo '<p>' . _AM_DOWNLOADS_NO_CAT_FOUND . '</p>';
+	}
 }
 
 icms_cp_footer();
